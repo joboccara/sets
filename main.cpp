@@ -8,6 +8,7 @@
 #include <set>
 #include <string>
 #include <sstream>
+#include <typeinfo>
 #include <utility>
 #include <vector>
 
@@ -218,6 +219,88 @@ bool testSet()
     return performTest<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool vectorUnderlyingType()
+{
+    return typeid(range_underlying_type<std::vector<std::string>>) == typeid(std::string);
+}
+
+bool mapUnderlyingType()
+{
+    return typeid(range_underlying_type<std::map<int, std::string>>) == typeid(std::pair<const int, std::string>);
+}
+
+bool vectorIteratorUnderlyingType()
+{
+    return typeid(iterator_underlying_type<std::vector<std::string>::iterator>) == typeid(std::string);
+}
+
+bool mapIteratorUnderlyingType()
+{
+    return typeid(iterator_underlying_type<std::map<int, std::string>::iterator>) == typeid(std::pair<const int, std::string>);
+}
+
+bool backInserterUnderlyingType()
+{
+    return typeid(iterator_underlying_type<std::back_insert_iterator<std::vector<std::string>>>) == typeid(std::string);
+}
+
+bool inserterUnderlyingType()
+{
+    return typeid(iterator_underlying_type<std::insert_iterator<std::set<std::string>>>) == typeid(std::string);
+}
+
+bool isPairPairInt()
+{
+    return is_pair<std::pair<int, int>>::value == true;
+}
+
+bool isPairInt()
+{
+    return is_pair<int>::value == false;
+}
+
+bool pairFirstType()
+{
+    return typeid(get_pair_first<std::pair<int, std::string>>) == typeid(int);
+}
+
+bool pairSecondType()
+{
+    return typeid(get_pair_second<std::pair<int, std::string>>) == typeid(std::string);
+}
+
+bool bothContainsLeftRight()
+{
+    return BothContainsLeftAndRight
+           <
+               std::vector < std::pair<int, std::string> >::iterator,
+               std::vector < int >,
+               std::set < std::string >
+           >::value == true
+           &&
+           BothContainsLeftAndRight
+           <
+               std::vector < std::pair<const int, const std::string> >::iterator,
+               std::vector < int >,
+               std::set < std::string >
+           >::value == true
+           &&
+           BothContainsLeftAndRight
+           <
+               std::set < std::pair<int, std::string> >::iterator,
+               std::set < int >,
+               std::vector < std::string >
+           >::value == true
+           &&
+           BothContainsLeftAndRight
+           <
+               std::vector < int >::iterator,
+               std::set < int >,
+               std::vector < int >
+           >::value == false;
+           
+}
+
 template <typename TestFunction>
 void launchTest(std::string const& testName, TestFunction testFunction)
 {
@@ -226,6 +309,7 @@ void launchTest(std::string const& testName, TestFunction testFunction)
 
 void launchTests()
 {
+    std::cout << "=== TESTS: set_seggregate===" << std::endl;
     launchTest("Left bigger", leftBigger);
     launchTest("Right bigger", rightBigger);
     launchTest("Left right equal size", leftRightEqualSize);
@@ -235,6 +319,20 @@ void launchTests()
     launchTest("Map", testMap);
     launchTest("Set", testSet);
     launchTest("Compare on keys", compareOnKeys);
+
+    std::cout << std::endl;
+    std::cout << "===TESTS: underlying_type===" << std::endl;
+    launchTest("Vector underlying type", vectorUnderlyingType);
+    launchTest("Map underlying type", mapUnderlyingType);
+    launchTest("Vector iterator underlying type", vectorIteratorUnderlyingType);
+    launchTest("Map iterator underlying type", mapIteratorUnderlyingType);
+    launchTest("Back inserter underlying type", backInserterUnderlyingType);
+    launchTest("Inserter underlying type", inserterUnderlyingType);
+    launchTest("Is pair std::pair<int, int>", isPairPairInt);
+    launchTest("Is pair int", isPairInt);
+    launchTest("Pair 1st type", pairFirstType);
+    launchTest("Pair 2st type", pairSecondType);
+    launchTest("Both contains left and right", bothContainsLeftRight);
 }
 
 }
