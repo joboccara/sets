@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+namespace 
+{
 namespace test
 {
 
@@ -60,6 +62,26 @@ bool performTest(RangeLeft const& left, RangeRight const& right,
     RangeRightOnly rightOnly;
     
     set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
+
+    return ranges::equal(leftOnly, expectedLeftOnly)
+        && ranges::equal(both, expectedBoth)
+        && ranges::equal(rightOnly, expectedRightOnly);
+}
+
+template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
+         typename BothOutputInsertion = LeftOnlyOutputInsertion,
+         typename RightOnlyOutputInsertion = LeftOnlyOutputInsertion,
+         typename RangeLeft, typename RangeRight,
+         typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly,
+         typename Compare>
+bool performTest(RangeLeft const& left, RangeRight const& right,
+                 RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly, Compare compare)
+{
+    RangeLeftOnly leftOnly;
+    RangeBoth both;
+    RangeRightOnly rightOnly;
+    
+    set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly), compare);
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -160,6 +182,30 @@ bool testMap()
     return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool compareOnKeys()
+{
+    std::map<int, std::string> left = {{1, "a"}, {2, "b"}, {3, "c1"}, {5, "e1"}, {7, "g1"}, {9, "i"}};
+    std::map<int, std::string> right = {{3, "c2"}, {4, "d"}, {5, "e2"}, {6, "f"},  {7, "g2"}};
+
+    std::map<int, std::string> expectedLeftOnly = {{1, "a"}, {2, "b"}, {9, "i"}};
+
+    std::vector<
+        std::pair<
+            std::pair<int, std::string>,
+            std::pair<int, std::string>
+        > 
+    >
+    expectedBoth = {std::make_pair(std::make_pair(3, "c1"), std::make_pair(3, "c2")),
+                    std::make_pair(std::make_pair(5, "e1"), std::make_pair(5, "e2")),
+                    std::make_pair(std::make_pair(7, "g1"), std::make_pair(7, "g2"))};
+
+    std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
+    
+    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+            (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
+            [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
+}
+
 bool testSet()
 {
     std::set<int> left = {1, 2, 3, 5, 7, 9};
@@ -188,8 +234,10 @@ void launchTests()
     launchTest("All empty", allEmpty);
     launchTest("Map", testMap);
     launchTest("Set", testSet);
+    launchTest("Compare on keys", compareOnKeys);
 }
 
+}
 }
 
 int main()
