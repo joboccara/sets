@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <string>
 #include <sstream>
 #include <utility>
@@ -27,15 +28,37 @@ std::vector<T> tee(std::vector<T> const& values)
     return values;
 }
 
-template<class RangeLeft, class RangeRight, class RangeLeftOnly, class RangeBoth, class RangeRightOnly>
-bool performTest(RangeLeft const& left, RangeRight const& right,
-          RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly)
+struct SequenceOutputInsertion
 {
-    std::vector<int> leftOnly;
-    std::vector<std::pair<int, int>> both;
-    std::vector<int> rightOnly;
+    template<typename SequenceContainer>
+    auto operator()(SequenceContainer& container)
+    {
+        return std::back_inserter(container);
+    }
+};
+
+struct AssociativeOutputInsertion
+{
+    template<typename AssociativeContainer>
+    auto operator()(AssociativeContainer& container)
+    {
+        return std::inserter(container, container.end());
+    }
+};
+
+template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
+         typename BothOutputInsertion = SequenceOutputInsertion,
+         typename RightOnlyOutputInsertion = SequenceOutputInsertion,
+         typename RangeLeft, typename RangeRight,
+         typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly>
+bool performTest(RangeLeft const& left, RangeRight const& right,
+                 RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly)
+{
+    RangeLeftOnly leftOnly;
+    RangeBoth both;
+    RangeRightOnly rightOnly;
     
-    set_seggregate(left, right, std::back_inserter(leftOnly), std::back_inserter(both), std::back_inserter(rightOnly));
+    set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -114,6 +137,28 @@ bool allEmpty()
     return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool testMap()
+{
+    std::map<int, std::string> left = {{1, "a"}, {2, "b"}, {3, "c"}, {5, "e"}, {7, "g"}, {9, "i"}};
+    std::map<int, std::string> right = {{3, "c"}, {4, "d"}, {5, "e"}, {6, "f"},  {7, "g"}};
+
+    std::map<int, std::string> expectedLeftOnly = {{1, "a"}, {2, "b"}, {9, "i"}};
+
+    std::vector<
+        std::pair<
+            std::pair<int, std::string>,
+            std::pair<int, std::string>
+        > 
+    >
+    expectedBoth = {std::make_pair(std::make_pair(3, "c"), std::make_pair(3, "c")),
+                    std::make_pair(std::make_pair(5, "e"), std::make_pair(5, "e")),
+                    std::make_pair(std::make_pair(7, "g"), std::make_pair(7, "g"))};
+
+    std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
+    
+    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
 template <typename TestFunction>
 void launchTest(std::string const& testName, TestFunction testFunction)
 {
@@ -128,6 +173,7 @@ void launchTests()
     launchTest("Left empty", leftEmpty);
     launchTest("Right empty", rightEmpty);
     launchTest("All empty", allEmpty);
+    launchTest("Map", testMap);
 }
 
 }
