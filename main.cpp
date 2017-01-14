@@ -78,6 +78,42 @@ bool leftRightEqualSize()
     return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool leftEmpty()
+{
+    std::vector<int> left = {};
+    std::vector<int> right = {3, 4, 5, 6, 7};
+
+    std::vector<int> expectedLeftOnly = {};
+    std::vector<std::pair<int, int>> expectedBoth = {};
+    std::vector<int> expectedRightOnly = {3, 4, 5, 6, 7};    
+
+    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
+bool rightEmpty()
+{
+    std::vector<int> left = {3, 4, 5, 6, 7};
+    std::vector<int> right = {};
+
+    std::vector<int> expectedLeftOnly = {3, 4, 5, 6, 7};    
+    std::vector<std::pair<int, int>> expectedBoth = {};
+    std::vector<int> expectedRightOnly = {};
+
+    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
+bool allEmpty()
+{
+    std::vector<int> left = {};
+    std::vector<int> right = {};
+
+    std::vector<int> expectedLeftOnly = {};
+    std::vector<std::pair<int, int>> expectedBoth = {};
+    std::vector<int> expectedRightOnly = {};
+
+    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
 template <typename TestFunction>
 void launchTest(std::string const& testName, TestFunction testFunction)
 {
@@ -89,6 +125,9 @@ void launchTests()
     launchTest("Left bigger", leftBigger);
     launchTest("Right bigger", rightBigger);
     launchTest("Left right equal size", leftRightEqualSize);
+    launchTest("Left empty", leftEmpty);
+    launchTest("Right empty", rightEmpty);
+    launchTest("All empty", allEmpty);
 }
 
 }
