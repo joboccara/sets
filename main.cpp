@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <map>
+#include <set>
 #include <string>
 #include <sstream>
 #include <utility>
@@ -47,8 +48,8 @@ struct AssociativeOutputInsertion
 };
 
 template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
-         typename BothOutputInsertion = SequenceOutputInsertion,
-         typename RightOnlyOutputInsertion = SequenceOutputInsertion,
+         typename BothOutputInsertion = LeftOnlyOutputInsertion,
+         typename RightOnlyOutputInsertion = LeftOnlyOutputInsertion,
          typename RangeLeft, typename RangeRight,
          typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly>
 bool performTest(RangeLeft const& left, RangeRight const& right,
@@ -159,6 +160,18 @@ bool testMap()
     return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool testSet()
+{
+    std::set<int> left = {1, 2, 3, 5, 7, 9};
+    std::set<int> right = {3, 4, 5, 6, 7};
+
+    std::set<int> expectedLeftOnly = {1, 2, 9};
+    std::set<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
+    std::set<int> expectedRightOnly = {4, 6};
+    
+    return performTest<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
 template <typename TestFunction>
 void launchTest(std::string const& testName, TestFunction testFunction)
 {
@@ -174,6 +187,7 @@ void launchTests()
     launchTest("Right empty", rightEmpty);
     launchTest("All empty", allEmpty);
     launchTest("Map", testMap);
+    launchTest("Set", testSet);
 }
 
 }
