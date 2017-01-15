@@ -79,6 +79,23 @@ struct get_pair_second_impl<std::pair<First, Second>>
 template<typename T>
 using get_pair_second = typename get_pair_second_impl< std::remove_const_t < std::remove_reference_t < T > > >::type;
 
+// remove const even inside pair (necessary to operate on maps iterators)
+
+template<typename T>
+struct remove_all_consts_impl
+{
+    using type = std::remove_const_t<T>;
+};
+
+template<typename T1, typename T2>
+struct remove_all_consts_impl<std::pair<T1, T2>>
+{
+    using type = std::pair<typename remove_all_consts_impl<T1>::type, typename remove_all_consts_impl<T2>::type>;
+};
+
+template<typename T>
+using remove_all_consts = typename remove_all_consts_impl<T>::type;
+
 // does both contain versions from left AND right
 
 template<bool isBothOutputAPair, typename BothOutputIterator, typename LeftRange, typename RightRange>
@@ -93,16 +110,15 @@ struct BothContainsLeftAndRightImpl<true, BothOutputIterator, LeftRange, RightRa
     static const bool value = 
         std::is_same
         <
-            std::remove_const_t < get_pair_first < iterator_underlying_type < BothOutputIterator > > >,
-            std::remove_const_t < range_underlying_type < LeftRange > >
+            remove_all_consts < get_pair_first < iterator_underlying_type < BothOutputIterator > > >,
+            remove_all_consts < range_underlying_type < LeftRange > >
         >::value
         &&
         std::is_same
         <
-            std::remove_const_t < get_pair_second < iterator_underlying_type < BothOutputIterator > > >,
-            std::remove_const_t < range_underlying_type < RightRange > >
+            remove_all_consts < get_pair_second < iterator_underlying_type < BothOutputIterator > > >,
+            remove_all_consts < range_underlying_type < RightRange > >
         >::value;
-
 };
 
 template<typename BothOutputIterator, typename LeftRange, typename RightRange>

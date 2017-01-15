@@ -207,6 +207,27 @@ bool compareOnKeys()
             [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
 }
 
+bool compareOnKeysKeepLeft()
+{
+    std::map<int, std::string> left = {{1, "a"}, {2, "b"}, {3, "c1"}, {5, "e1"}, {7, "g1"}, {9, "i"}};
+    std::map<int, std::string> right = {{3, "c2"}, {4, "d"}, {5, "e2"}, {6, "f"},  {7, "g2"}};
+
+    std::map<int, std::string> expectedLeftOnly = {{1, "a"}, {2, "b"}, {9, "i"}};
+
+    std::vector<
+            std::pair<int, std::string>
+    >
+    expectedBoth = {std::make_pair(3, "c1"),
+                    std::make_pair(5, "e1"),
+                    std::make_pair(7, "g1")};
+
+    std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
+    
+    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+            (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
+            [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
+}
+
 bool testSet()
 {
     std::set<int> left = {1, 2, 3, 5, 7, 9};
@@ -319,6 +340,7 @@ void launchTests()
     launchTest("Map", testMap);
     launchTest("Set", testSet);
     launchTest("Compare on keys", compareOnKeys);
+    launchTest("Compare on keys keep left", compareOnKeysKeepLeft);
 
     std::cout << std::endl;
     std::cout << "===TESTS: underlying_type===" << std::endl;
