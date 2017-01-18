@@ -95,9 +95,9 @@ void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight>
 void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
-                    OutputItLeft rightOnly, OutputItBoth both, OutputItRight leftOnly)
+                    OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly)
 {
-    set_seggregate(leftRange, rightRange, rightOnly, both, leftOnly, std::less<typename std::iterator_traits<typename LeftRange::const_iterator>::reference>());
+    set_seggregate(leftRange, rightRange, leftOnly, both, rightOnly, std::less<typename std::iterator_traits<typename LeftRange::const_iterator>::reference>());
 }
 
 #endif
