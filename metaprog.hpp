@@ -93,6 +93,12 @@ struct remove_all_consts_impl<std::pair<T1, T2>>
     using type = std::pair<typename remove_all_consts_impl<T1>::type, typename remove_all_consts_impl<T2>::type>;
 };
 
+template<typename T1, typename T2>
+struct remove_all_consts_impl<const std::pair<T1, T2>>
+{
+    using type = std::pair<typename remove_all_consts_impl<T1>::type, typename remove_all_consts_impl<T2>::type>;
+};
+
 template<typename T>
 using remove_all_consts = typename remove_all_consts_impl<T>::type;
 

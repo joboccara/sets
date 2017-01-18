@@ -1,4 +1,5 @@
 #include "algorithm.hpp"
+#include "set_aggregate.hpp"
 #include "set_seggregate.hpp"
 
 #include <algorithm>
@@ -55,7 +56,7 @@ template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
          typename RightOnlyOutputInsertion = LeftOnlyOutputInsertion,
          typename RangeLeft, typename RangeRight,
          typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly>
-bool performTest(RangeLeft const& left, RangeRight const& right,
+bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
                  RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly)
 {
     RangeLeftOnly leftOnly;
@@ -75,7 +76,7 @@ template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
          typename RangeLeft, typename RangeRight,
          typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly,
          typename Compare>
-bool performTest(RangeLeft const& left, RangeRight const& right,
+bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
                  RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly, Compare compare)
 {
     RangeLeftOnly leftOnly;
@@ -98,7 +99,7 @@ bool leftBigger()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {4, 6};
     
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool rightBigger()
@@ -110,7 +111,7 @@ bool rightBigger()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {0, 4, 6, 9};
     
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool leftRightEqualSize()
@@ -122,7 +123,19 @@ bool leftRightEqualSize()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {4, 6};
     
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
+bool takeLeftInBoth()
+{
+    std::vector<int> left = {1, 2, 3, 5, 7, 9};
+    std::vector<int> right = {3, 4, 5, 6, 7};
+
+    std::vector<int> expectedLeftOnly = {1, 2, 9};
+    std::vector<int> expectedBoth = { 3, 5, 7 };
+    std::vector<int> expectedRightOnly = {4, 6};
+    
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool leftEmpty()
@@ -134,7 +147,7 @@ bool leftEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {3, 4, 5, 6, 7};    
 
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool rightEmpty()
@@ -146,7 +159,7 @@ bool rightEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {};
 
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool allEmpty()
@@ -158,7 +171,7 @@ bool allEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {};
 
-    return performTest(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool testMap()
@@ -180,7 +193,7 @@ bool testMap()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool compareOnKeys()
@@ -202,7 +215,7 @@ bool compareOnKeys()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
             (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
             [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
 }
@@ -223,7 +236,7 @@ bool compareOnKeysKeepLeft()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return performTest<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
             (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
             [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
 }
@@ -237,7 +250,28 @@ bool testSet()
     std::set<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::set<int> expectedRightOnly = {4, 6};
     
-    return performTest<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSeggregate<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
+template<typename T1, typename T2>
+std::ostream& operator<<(std::ostream& os, std::pair<T1, T2> const& p)
+{
+    os << p.first << '-' << p.second;
+    return os;
+}
+
+bool testSetAggregate()
+{
+    std::map<int, std::string> left = {{1, "a"}, {2, "b"}, {3, "c1"}, {5, "e1"}, {7, "g1"}, {9, "i"}};
+    std::map<int, std::string> right = {{3, "c2"}, {4, "d"}, {5, "e2"}, {6, "f"},  {7, "g2"}};
+
+    std::vector<std::pair<int, std::string>> expectedPermutation = {{1, "a"}, {2, "b"}, {3, "c1c2"}, {4, "d"}, {5, "e1e2"}, {6, "f"}, {7, "g1g2"}, {9, "i"}};
+    std::vector<std::pair<int, std::string>> results;
+    set_aggregate(left, right, std::back_inserter(results),
+        [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return p1.first < p2.first; },
+        [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return std::make_pair(p1.first, p1.second + p2.second); });
+
+    return std::is_permutation(results.begin(), results.end(), expectedPermutation.begin(), expectedPermutation.end());
 }
 
 bool vectorUnderlyingType()
@@ -330,10 +364,11 @@ void launchTest(std::string const& testName, TestFunction testFunction)
 
 void launchTests()
 {
-    std::cout << "=== TESTS: set_seggregate===" << std::endl;
+    std::cout << "=== TESTS: set_seggregate ===" << std::endl;
     launchTest("Left bigger", leftBigger);
     launchTest("Right bigger", rightBigger);
     launchTest("Left right equal size", leftRightEqualSize);
+    launchTest("Take left in both", takeLeftInBoth);
     launchTest("Left empty", leftEmpty);
     launchTest("Right empty", rightEmpty);
     launchTest("All empty", allEmpty);
@@ -342,8 +377,11 @@ void launchTests()
     launchTest("Compare on keys", compareOnKeys);
     launchTest("Compare on keys keep left", compareOnKeysKeepLeft);
 
+    std::cout << "=== TESTS: set_seggregate ===" << std::endl;
+    launchTest("Set aggregate", testSetAggregate);
+
     std::cout << std::endl;
-    std::cout << "===TESTS: underlying_type===" << std::endl;
+    std::cout << "=== TESTS: underlying_type ===" << std::endl;
     launchTest("Vector underlying type", vectorUnderlyingType);
     launchTest("Map underlying type", mapUnderlyingType);
     launchTest("Vector iterator underlying type", vectorIteratorUnderlyingType);
