@@ -174,6 +174,18 @@ bool allEmpty()
     return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
+bool identicalElements()
+{
+    std::vector<int> left = {1, 2, 2, 3, 5, 7, 9};
+    std::vector<int> right = {3, 4, 4, 5, 5, 6, 7};
+
+    std::vector<int> expectedLeftOnly = {1, 2, 2, 9};
+    std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
+    std::vector<int> expectedRightOnly = {4, 4, 5, 6};
+    
+    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+}
+
 bool testMap()
 {
     std::map<int, std::string> left = {{1, "a"}, {2, "b"}, {3, "c"}, {5, "e"}, {7, "g"}, {9, "i"}};
@@ -372,6 +384,7 @@ void launchTests()
     launchTest("Left empty", leftEmpty);
     launchTest("Right empty", rightEmpty);
     launchTest("All empty", allEmpty);
+    launchTest("Identical elements", identicalElements);
     launchTest("Map", testMap);
     launchTest("Set", testSet);
     launchTest("Compare on keys", compareOnKeys);
