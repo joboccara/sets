@@ -6,6 +6,9 @@
 #include "set_seggregate.hpp"
 #include <vector>
 
+namespace fluent
+{
+
 template<typename Range1, typename Range2, typename OutputIterator, typename Compare, typename Function>
 OutputIterator set_aggregate(Range1 const& range1, Range2 const& range2,
                    OutputIterator output, Compare compare, Function aggregator)
@@ -19,6 +22,7 @@ OutputIterator set_aggregate(Range1 const& range1, Range2 const& range2,
                           output,
                           [aggregator](std::pair<value_type1, value_type2> const& p){return aggregator(p.first, p.second);});
 }
-
+    
+} // namespace fluent
 #endif
 

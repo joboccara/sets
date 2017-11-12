@@ -3,6 +3,11 @@
 
 #include "metaprog.hpp"
 
+namespace fluent
+{
+namespace details
+{
+    
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare, class AddToBoth>
 void set_seggregate_impl(LeftRange const& leftRange, RightRange const& rightRange,
@@ -81,7 +86,7 @@ struct Set_seggregate_impl<false>
         set_seggregate_impl(leftRange, rightRange, leftOnly, both, rightOnly, comp, AddLeftToBoth());
     }
 };
-
+} // namespace details
 
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare>
@@ -89,7 +94,7 @@ void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
                     OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                     Compare comp)
 {
-    Set_seggregate_impl<BothContainsLeftAndRight<OutputItBoth, LeftRange, RightRange>::value>()(leftRange, rightRange, leftOnly, both, rightOnly, comp);
+    details::Set_seggregate_impl<BothContainsLeftAndRight<OutputItBoth, LeftRange, RightRange>::value>()(leftRange, rightRange, leftOnly, both, rightOnly, comp);
 }
 
 template<class LeftRange, class RightRange,
@@ -99,6 +104,8 @@ void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
 {
     set_seggregate(leftRange, rightRange, leftOnly, both, rightOnly, std::less<typename std::iterator_traits<typename LeftRange::const_iterator>::reference>());
 }
+
+} // namespace fluent
 
 #endif
 

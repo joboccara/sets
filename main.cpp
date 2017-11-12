@@ -64,7 +64,7 @@ bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
     RangeBoth both;
     RangeRightOnly rightOnly;
     
-    set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
+    fluent::set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -84,7 +84,7 @@ bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
     RangeBoth both;
     RangeRightOnly rightOnly;
     
-    set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly), compare);
+    fluent::set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly), compare);
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -280,7 +280,7 @@ bool testSetAggregate()
 
     std::vector<std::pair<int, std::string>> expectedPermutation = {{1, "a"}, {2, "b"}, {3, "c1c2"}, {4, "d"}, {5, "e1e2"}, {6, "f"}, {7, "g1g2"}, {9, "i"}};
     std::vector<std::pair<int, std::string>> results;
-    set_aggregate(left, right, std::back_inserter(results),
+    fluent::set_aggregate(left, right, std::back_inserter(results),
         [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return p1.first < p2.first; },
         [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return std::make_pair(p1.first, p1.second + p2.second); });
 
@@ -297,48 +297,48 @@ bool testSetLogicalOperation()
 
     // none
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return false;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return false;});
     if (!ranges::equal(results, expected)) return false;
 
     // and
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && inRight;});
     std::set_intersection(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
     if (!ranges::equal(results, expected)) return false;
 
     // left only
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && !inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && !inRight;});
     std::set_difference(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
     if (!ranges::equal(results, expected)) return false;
 
     // left
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft;});
     expected.assign(begin(left), end(left));
     if (!ranges::equal(results, expected)) return false;
     
     // right only
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return !inLeft && inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return !inLeft && inRight;});
     std::set_difference(begin(right), end(right), begin(left), end(left), std::back_inserter(expected));
     if (!ranges::equal(results, expected)) return false;
     
     // right
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inRight;});
     expected.assign(begin(right), end(right));
     if (!ranges::equal(results, expected)) return false;
     
     // xor
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft ^ inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft ^ inRight;});
     std::set_symmetric_difference(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
     if (!ranges::equal(results, expected)) return false;
     
     // or
     results.clear(); expected.clear();
-    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft || inRight;});
+    fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft || inRight;});
     std::set_union(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
     if (!ranges::equal(results, expected)) return false;
 

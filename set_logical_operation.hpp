@@ -13,8 +13,13 @@
 #include "output_transformer.hpp"
 #include "set_seggregate.hpp"
 
+namespace fluent
+{
+namespace details
+{
+    
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft, typename OutputIteratorBoth>
-void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft, OutputIteratorBoth outBoth)
+void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft, OutputIteratorBoth outBoth)
 {
     if (logicalOperation(false, true)) // in right and not in left
     {
@@ -27,29 +32,32 @@ void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIte
 }
 
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft>
-void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft)
+void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft)
 {
     if (logicalOperation(true, true)) // both in left and in right
     {
-        set_logical_operation(range1, range2, out, logicalOperation, outLeft, out);
+        set_logical_operation_impl(range1, range2, out, logicalOperation, outLeft, out);
     }
     else
     {
-        set_logical_operation(range1, range2, out, logicalOperation, outLeft, dead_end_iterator());
+        set_logical_operation_impl(range1, range2, out, logicalOperation, outLeft, dead_end_iterator());
     }
 }
-
+} // namespace details
+    
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation>
 void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation)
 {
     if (logicalOperation(true, false)) // in left and not in right
     {
-        set_logical_operation(range1, range2, out, logicalOperation, out);
+        details::set_logical_operation_impl(range1, range2, out, logicalOperation, out);
     }
     else
     {
-        set_logical_operation(range1, range2, out, logicalOperation, dead_end_iterator());
+        details::set_logical_operation_impl(range1, range2, out, logicalOperation, dead_end_iterator());
     }
 }
+
+} // namespace fluent
 
 #endif /* set_logic_operation_h */
