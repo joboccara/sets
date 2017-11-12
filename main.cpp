@@ -1,6 +1,7 @@
 #include "algorithm.hpp"
 #include "set_aggregate.hpp"
 #include "set_seggregate.hpp"
+#include "set_logical_operation.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -283,7 +284,65 @@ bool testSetAggregate()
         [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return p1.first < p2.first; },
         [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2){ return std::make_pair(p1.first, p1.second + p2.second); });
 
-    return std::is_permutation(results.begin(), results.end(), expectedPermutation.begin(), expectedPermutation.end());
+    return ranges::is_permutation(results, expectedPermutation);
+}
+    
+bool testSetLogicalOperation()
+{
+    std::set<int> left = {1, 2, 3, 5, 7, 9};
+    std::set<int> right = {2, 4, 5, 6, 10};
+
+    std::vector<int> expected;
+    std::vector<int> results;
+
+    // none
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return false;});
+    if (!ranges::equal(results, expected)) return false;
+
+    // and
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && inRight;});
+    std::set_intersection(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
+    if (!ranges::equal(results, expected)) return false;
+
+    // left only
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && !inRight;});
+    std::set_difference(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
+    if (!ranges::equal(results, expected)) return false;
+
+    // left
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft;});
+    expected.assign(begin(left), end(left));
+    if (!ranges::equal(results, expected)) return false;
+    
+    // right only
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return !inLeft && inRight;});
+    std::set_difference(begin(right), end(right), begin(left), end(left), std::back_inserter(expected));
+    if (!ranges::equal(results, expected)) return false;
+    
+    // right
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inRight;});
+    expected.assign(begin(right), end(right));
+    if (!ranges::equal(results, expected)) return false;
+    
+    // xor
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft ^ inRight;});
+    std::set_symmetric_difference(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
+    if (!ranges::equal(results, expected)) return false;
+    
+    // or
+    results.clear(); expected.clear();
+    set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft || inRight;});
+    std::set_union(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
+    if (!ranges::equal(results, expected)) return false;
+
+    return true;
 }
 
 bool vectorUnderlyingType()
@@ -369,43 +428,48 @@ bool bothContainsLeftRight()
 }
 
 template <typename TestFunction>
-void launchTest(std::string const& testName, TestFunction testFunction)
+bool launchTest(std::string const& testName, TestFunction testFunction)
 {
-    std::cout << "Test - " << testName << ": " << (testFunction() ? "OK" : "FAILED") << std::endl;
+    const bool success = testFunction();
+    if (!success)
+        std::cout << "Test - " << testName << ": FAILED\n";
+    return success;
 }
 
 void launchTests()
 {
-    std::cout << "=== TESTS: set_seggregate ===" << std::endl;
-    launchTest("Left bigger", leftBigger);
-    launchTest("Right bigger", rightBigger);
-    launchTest("Left right equal size", leftRightEqualSize);
-    launchTest("Take left in both", takeLeftInBoth);
-    launchTest("Left empty", leftEmpty);
-    launchTest("Right empty", rightEmpty);
-    launchTest("All empty", allEmpty);
-    launchTest("Identical elements", identicalElements);
-    launchTest("Map", testMap);
-    launchTest("Set", testSet);
-    launchTest("Compare on keys", compareOnKeys);
-    launchTest("Compare on keys keep left", compareOnKeysKeepLeft);
+    bool success = true;
+    success &= launchTest("Left bigger", leftBigger);
+    success &= launchTest("Right bigger", rightBigger);
+    success &= launchTest("Left right equal size", leftRightEqualSize);
+    success &= launchTest("Take left in both", takeLeftInBoth);
+    success &= launchTest("Left empty", leftEmpty);
+    success &= launchTest("Right empty", rightEmpty);
+    success &= launchTest("All empty", allEmpty);
+    success &= launchTest("Identical elements", identicalElements);
+    success &= launchTest("Map", testMap);
+    success &= launchTest("Set", testSet);
+    success &= launchTest("Compare on keys", compareOnKeys);
+    success &= launchTest("Compare on keys keep left", compareOnKeysKeepLeft);
 
-    std::cout << "=== TESTS: set_seggregate ===" << std::endl;
-    launchTest("Set aggregate", testSetAggregate);
+    success &= launchTest("Set aggregate", testSetAggregate);
+    
+    success &= launchTest("set_logical_operation", testSetLogicalOperation);
 
-    std::cout << std::endl;
-    std::cout << "=== TESTS: underlying_type ===" << std::endl;
-    launchTest("Vector underlying type", vectorUnderlyingType);
-    launchTest("Map underlying type", mapUnderlyingType);
-    launchTest("Vector iterator underlying type", vectorIteratorUnderlyingType);
-    launchTest("Map iterator underlying type", mapIteratorUnderlyingType);
-    launchTest("Back inserter underlying type", backInserterUnderlyingType);
-    launchTest("Inserter underlying type", inserterUnderlyingType);
-    launchTest("Is pair std::pair<int, int>", isPairPairInt);
-    launchTest("Is pair int", isPairInt);
-    launchTest("Pair 1st type", pairFirstType);
-    launchTest("Pair 2st type", pairSecondType);
-    launchTest("Both contains left and right", bothContainsLeftRight);
+    success &= launchTest("Vector underlying type", vectorUnderlyingType);
+    success &= launchTest("Map underlying type", mapUnderlyingType);
+    success &= launchTest("Vector iterator underlying type", vectorIteratorUnderlyingType);
+    success &= launchTest("Map iterator underlying type", mapIteratorUnderlyingType);
+    success &= launchTest("Back inserter underlying type", backInserterUnderlyingType);
+    success &= launchTest("Inserter underlying type", inserterUnderlyingType);
+    success &= launchTest("Is pair std::pair<int, int>", isPairPairInt);
+    success &= launchTest("Is pair int", isPairInt);
+    success &= launchTest("Pair 1st type", pairFirstType);
+    success &= launchTest("Pair 2st type", pairSecondType);
+    success &= launchTest("Both contains left and right", bothContainsLeftRight);
+    
+    if (success)
+        std::cout << "All tests PASSED\n";
 }
 
 }
