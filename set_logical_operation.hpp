@@ -11,7 +11,7 @@
 
 #include "dead_end_iterator.hpp"
 #include "output_transformer.hpp"
-#include "set_seggregate.hpp"
+#include "set_segregate.hpp"
 
 namespace fluent
 {
@@ -23,11 +23,11 @@ void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, Outp
 {
     if (logicalOperation(false, true)) // in right and not in left
     {
-        set_seggregate(range1, range2, outLeft, outBoth, out);
+        set_segregate(range1, range2, outLeft, outBoth, out);
     }
     else
     {
-        set_seggregate(range1, range2, outLeft, outBoth, dead_end_iterator());
+        set_segregate(range1, range2, outLeft, outBoth, dead_end_iterator());
     }
 }
 

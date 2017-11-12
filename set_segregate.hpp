@@ -10,7 +10,7 @@ namespace details
     
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare, class AddToBoth>
-void set_seggregate_impl(LeftRange const& leftRange, RightRange const& rightRange,
+void set_segregate_impl(LeftRange const& leftRange, RightRange const& rightRange,
                          OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                          Compare comp, AddToBoth addToBoth)
 {
@@ -62,7 +62,7 @@ struct AddLeftToBoth
 };
 
 template<bool bothContainsLeftAndRight>
-struct Set_seggregate_impl
+struct Set_segregate_impl
 {
     template<class LeftRange, class RightRange,
              class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare>
@@ -70,12 +70,12 @@ struct Set_seggregate_impl
                            OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                            Compare comp)
     {
-        set_seggregate_impl(leftRange, rightRange, leftOnly, both, rightOnly, comp, AddPairToBoth());
+        set_segregate_impl(leftRange, rightRange, leftOnly, both, rightOnly, comp, AddPairToBoth());
     }
 };
 
 template<>
-struct Set_seggregate_impl<false>
+struct Set_segregate_impl<false>
 {
     template<class LeftRange, class RightRange,
              class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare>
@@ -83,26 +83,26 @@ struct Set_seggregate_impl<false>
                            OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                            Compare comp)
     {
-        set_seggregate_impl(leftRange, rightRange, leftOnly, both, rightOnly, comp, AddLeftToBoth());
+        set_segregate_impl(leftRange, rightRange, leftOnly, both, rightOnly, comp, AddLeftToBoth());
     }
 };
 } // namespace details
 
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight, class Compare>
-void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
+void set_segregate(LeftRange const& leftRange, RightRange const& rightRange,
                     OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                     Compare comp)
 {
-    details::Set_seggregate_impl<BothContainsLeftAndRight<OutputItBoth, LeftRange, RightRange>::value>()(leftRange, rightRange, leftOnly, both, rightOnly, comp);
+    details::Set_segregate_impl<BothContainsLeftAndRight<OutputItBoth, LeftRange, RightRange>::value>()(leftRange, rightRange, leftOnly, both, rightOnly, comp);
 }
 
 template<class LeftRange, class RightRange,
          class OutputItLeft, class OutputItBoth, class OutputItRight>
-void set_seggregate(LeftRange const& leftRange, RightRange const& rightRange,
+void set_segregate(LeftRange const& leftRange, RightRange const& rightRange,
                     OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly)
 {
-    set_seggregate(leftRange, rightRange, leftOnly, both, rightOnly, std::less<typename std::iterator_traits<typename LeftRange::const_iterator>::reference>());
+    set_segregate(leftRange, rightRange, leftOnly, both, rightOnly, std::less<typename std::iterator_traits<typename LeftRange::const_iterator>::reference>());
 }
 
 } // namespace fluent

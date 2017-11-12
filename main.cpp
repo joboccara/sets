@@ -1,6 +1,6 @@
 #include "algorithm.hpp"
 #include "set_aggregate.hpp"
-#include "set_seggregate.hpp"
+#include "set_segregate.hpp"
 #include "set_logical_operation.hpp"
 
 #include <algorithm>
@@ -57,14 +57,14 @@ template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
          typename RightOnlyOutputInsertion = LeftOnlyOutputInsertion,
          typename RangeLeft, typename RangeRight,
          typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly>
-bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
+bool testSetSegregate(RangeLeft const& left, RangeRight const& right,
                  RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly)
 {
     RangeLeftOnly leftOnly;
     RangeBoth both;
     RangeRightOnly rightOnly;
     
-    fluent::set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
+    fluent::set_segregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly));
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -77,14 +77,14 @@ template<typename LeftOnlyOutputInsertion = SequenceOutputInsertion,
          typename RangeLeft, typename RangeRight,
          typename RangeLeftOnly, typename RangeBoth, typename RangeRightOnly,
          typename Compare>
-bool testSetSeggregate(RangeLeft const& left, RangeRight const& right,
+bool testSetSegregate(RangeLeft const& left, RangeRight const& right,
                  RangeLeftOnly const& expectedLeftOnly, RangeBoth const& expectedBoth, RangeRightOnly const& expectedRightOnly, Compare compare)
 {
     RangeLeftOnly leftOnly;
     RangeBoth both;
     RangeRightOnly rightOnly;
     
-    fluent::set_seggregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly), compare);
+    fluent::set_segregate(left, right, LeftOnlyOutputInsertion()(leftOnly), BothOutputInsertion()(both), RightOnlyOutputInsertion()(rightOnly), compare);
 
     return ranges::equal(leftOnly, expectedLeftOnly)
         && ranges::equal(both, expectedBoth)
@@ -100,7 +100,7 @@ bool leftBigger()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {4, 6};
     
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool rightBigger()
@@ -112,7 +112,7 @@ bool rightBigger()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {0, 4, 6, 9};
     
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool leftRightEqualSize()
@@ -124,7 +124,7 @@ bool leftRightEqualSize()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {4, 6};
     
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool takeLeftInBoth()
@@ -136,7 +136,7 @@ bool takeLeftInBoth()
     std::vector<int> expectedBoth = { 3, 5, 7 };
     std::vector<int> expectedRightOnly = {4, 6};
     
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool leftEmpty()
@@ -148,7 +148,7 @@ bool leftEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {3, 4, 5, 6, 7};    
 
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool rightEmpty()
@@ -160,7 +160,7 @@ bool rightEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {};
 
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool allEmpty()
@@ -172,7 +172,7 @@ bool allEmpty()
     std::vector<std::pair<int, int>> expectedBoth = {};
     std::vector<int> expectedRightOnly = {};
 
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool identicalElements()
@@ -184,7 +184,7 @@ bool identicalElements()
     std::vector<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::vector<int> expectedRightOnly = {4, 4, 5, 6};
     
-    return testSetSeggregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool testMap()
@@ -206,7 +206,7 @@ bool testMap()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 bool compareOnKeys()
@@ -228,7 +228,7 @@ bool compareOnKeys()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+    return testSetSegregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
             (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
             [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
 }
@@ -249,7 +249,7 @@ bool compareOnKeysKeepLeft()
 
     std::map<int, std::string> expectedRightOnly = {{4, "d"}, {6, "f"}};
     
-    return testSetSeggregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
+    return testSetSegregate<AssociativeOutputInsertion, SequenceOutputInsertion, AssociativeOutputInsertion>
             (left, right, expectedLeftOnly, expectedBoth, expectedRightOnly,
             [](std::pair<const int, std::string> const& p1, std::pair<const int, std::string> const& p2) {return p1.first < p2.first;});
 }
@@ -263,7 +263,7 @@ bool testSet()
     std::set<std::pair<int, int>> expectedBoth = {std::make_pair(3, 3), std::make_pair(5, 5), std::make_pair(7, 7)};
     std::set<int> expectedRightOnly = {4, 6};
     
-    return testSetSeggregate<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
+    return testSetSegregate<AssociativeOutputInsertion>(left, right, expectedLeftOnly, expectedBoth, expectedRightOnly);
 }
 
 template<typename T1, typename T2>

@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <iterator>
-#include "set_seggregate.hpp"
+#include "set_segregate.hpp"
 #include <vector>
 
 namespace fluent
@@ -17,7 +17,7 @@ OutputIterator set_aggregate(Range1 const& range1, Range2 const& range2,
     using value_type2 = typename std::remove_reference<decltype(*range2.begin())>::type;
 
     std::vector<std::pair<value_type1, value_type2>> elementsInBoth;
-    set_seggregate(range1, range2, output, std::back_inserter(elementsInBoth), output, compare);
+    set_segregate(range1, range2, output, std::back_inserter(elementsInBoth), output, compare);
     return std::transform(elementsInBoth.begin(), elementsInBoth.end(),
                           output,
                           [aggregator](std::pair<value_type1, value_type2> const& p){return aggregator(p.first, p.second);});
