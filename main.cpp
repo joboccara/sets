@@ -36,7 +36,7 @@ std::vector<T> tee(std::vector<T> const& values)
 struct SequenceOutputInsertion
 {
     template<typename SequenceContainer>
-    auto operator()(SequenceContainer& container)
+    auto operator()(SequenceContainer& container) -> decltype(std::back_inserter(container))
     {
         return std::back_inserter(container);
     }
@@ -45,7 +45,7 @@ struct SequenceOutputInsertion
 struct AssociativeOutputInsertion
 {
     template<typename AssociativeContainer>
-    auto operator()(AssociativeContainer& container)
+    auto operator()(AssociativeContainer& container) -> decltype(std::inserter(container, container.end()))
     {
         return std::inserter(container, container.end());
     }

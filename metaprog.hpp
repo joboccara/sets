@@ -10,7 +10,7 @@
 template<typename Iterator>
 struct iterator_underlying_type_impl
 {
-    using type = std::remove_reference_t<decltype(*std::declval<Iterator>())>;
+    using type = typename std::remove_reference<decltype(*std::declval<Iterator>())>::type;
 };
 
 template<typename Container>
@@ -47,7 +47,7 @@ struct is_pair_impl<std::pair<T1,T2>>
 
 template<typename T>
 struct is_pair :
-    is_pair_impl < std::remove_const_t < std::remove_reference_t < T > > >
+is_pair_impl < typename std::remove_const< typename std::remove_reference< T >::type >::type >
 {};
 
 
@@ -63,7 +63,7 @@ struct get_pair_first_impl<std::pair<First, Second>>
 };
 
 template<typename T>
-using get_pair_first = typename get_pair_first_impl< std::remove_const_t < std::remove_reference_t < T > > >::type;
+using get_pair_first = typename get_pair_first_impl< typename std::remove_const < typename std::remove_reference < T >::type >::type >::type;
 
 // get_pair_second
 
@@ -77,14 +77,14 @@ struct get_pair_second_impl<std::pair<First, Second>>
 };
 
 template<typename T>
-using get_pair_second = typename get_pair_second_impl< std::remove_const_t < std::remove_reference_t < T > > >::type;
+using get_pair_second = typename get_pair_second_impl< typename std::remove_const < typename std::remove_reference < T >::type >::type >::type;
 
 // remove const even inside pair (necessary to operate on maps iterators)
 
 template<typename T>
 struct remove_all_consts_impl
 {
-    using type = std::remove_const_t<T>;
+    using type = typename std::remove_const<T>::type;
 };
 
 template<typename T1, typename T2>
