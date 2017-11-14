@@ -25,9 +25,9 @@ Here is its interface:
 
 ```cpp
 template<typename LeftRange, typename RightRange,
-typename OutputItLeft, typename OutputItBoth, typename OutputItRight>
+         typename OutputItLeft, typename OutputItBoth, typename OutputItRight>
 void set_segregate(LeftRange const& leftRange, RightRange const& rightRange,
-OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly)
+                   OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly)
 ```
 
 (there is also an overload that accepts a custom comparator.)
@@ -47,9 +47,9 @@ The type of the output iterator passed is examined at compile-time for the algor
 
 ```cpp
 template<typename Range1, typename Range2, typename OutputIterator,
-typename Compare, typename Function>
+         typename Compare, typename Function>
 OutputIterator set_aggregate(Range1 const& range1, Range2 const& range2,
-OutputIterator output, Compare compare, Function aggregator)
+                             OutputIterator output, Compare compare, Function aggregator)
 
 ```
 
@@ -67,9 +67,9 @@ For instance, `std::set_union` would be equivalent to `set_logical_operation` wi
 
 ```cpp
 template<typename Range1, typename Range2, typename OutputIterator,
-typename LogicalOperation>
+         typename LogicalOperation>
 OutputIterator set_logical_operation(Range1 const& range1, Range2 const& range2,
-OutputIterator out, LogicalOperation logicalOperation)
+                                     OutputIterator out, LogicalOperation logicalOperation)
 ```
 
 The function prototype expected by `LogicalOperation` takes 2 `bool`s in parameter and outputs 1 `bool`. For instance, the logical operation that would make the `set_logical_operation` equivalent to `std::set_difference` is:
@@ -77,7 +77,7 @@ The function prototype expected by `LogicalOperation` takes 2 `bool`s in paramet
 ```cpp
 bool leftOnly(bool inLeft, bool inRight)
 {
-return inLeft && !inRight;
+    return inLeft && !inRight;
 }
 ```
 
@@ -92,10 +92,9 @@ The output of `set_match` is an output iterator whose value type is a `std::pair
 This is useful when making a comparison on a key within the elements compared, as values with equivalent keys could be different between the two sets.
 
 ```cpp
-template<typename Range1, typename Range2, typename OutputIterator,
-typename Comparator>
+template<typename Range1, typename Range2, typename OutputIterator, typename Comparator>
 OutputIterator set_match(Range1 const& range1, Range2 const& range2,
-OutputIterator out, Comparator comparator)
+                         OutputIterator out, Comparator comparator)
 ```
 
 The output is sorted.
