@@ -18,7 +18,7 @@ namespace details
 {
     
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft, typename OutputIteratorBoth>
-void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft, OutputIteratorBoth outBoth)
+OutputIterator set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft, OutputIteratorBoth outBoth)
 {
     if (logicalOperation(false, true)) // in right and not in left
     {
@@ -28,10 +28,11 @@ void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, Outp
     {
         set_segregate(range1, range2, outLeft, outBoth, dead_end_iterator());
     }
+    return out;
 }
 
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft>
-void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft)
+OutputIterator set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft)
 {
     if (logicalOperation(true, true)) // both in left and in right
     {
@@ -41,11 +42,12 @@ void set_logical_operation_impl(Range1 const& range1, Range2 const& range2, Outp
     {
         set_logical_operation_impl(range1, range2, out, logicalOperation, outLeft, dead_end_iterator());
     }
+    return out;
 }
 } // namespace details
     
 template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation>
-void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation)
+OutputIterator set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation)
 {
     if (logicalOperation(true, false)) // in left and not in right
     {
@@ -55,6 +57,7 @@ void set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIte
     {
         details::set_logical_operation_impl(range1, range2, out, logicalOperation, dead_end_iterator());
     }
+    return out;
 }
 
 } // namespace fluent

@@ -16,9 +16,10 @@ namespace fluent
 {
 
 template<typename Range1, typename Range2, typename OutputIterator, typename Comparator>
-void set_match(Range1 const& range1, Range2 const& range2, OutputIterator out, Comparator comparator)
+OutputIterator set_match(Range1 const& range1, Range2 const& range2, OutputIterator out, Comparator comparator)
 {
     set_segregate(range1, range2, dead_end_iterator(), out, dead_end_iterator(), comparator);
+    return out;
 }
 
 } // namespace fluent
