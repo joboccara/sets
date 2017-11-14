@@ -10,7 +10,6 @@
 #define set_logical_operation_hpp
 
 #include "dead_end_iterator.hpp"
-#include "output_transformer.hpp"
 #include "set_segregate.hpp"
 
 namespace fluent
