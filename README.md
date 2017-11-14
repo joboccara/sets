@@ -60,7 +60,7 @@ So `set_agregate` sends to its output iterator:
 
 Its output is sorted.
 
-##`set_logical_operation`
+## `set_logical_operation`
 
 This comes from an observation that the 4 sets algorithms of the STL could be generalized and extended into one algorithm that takes a logical operation. Let's call this algorithm `set_logical_operation`, until we find a better name.
 For instance, `std::set_union` would be equivalent to `set_logical_operation` with the OR logical operator, and `std::set_symmetric_difference` equivalent to the one with the XOR operator.
@@ -83,7 +83,7 @@ bool leftOnly(bool inLeft, bool inRight)
 
 The output of the algorithm is sorted.
 
-##`set_match`
+## `set_match`
 
 `set_match` is similar to `std::set_union`, except that where `std::set_union` only outputs the values coming from the first set that are in common with the second set, `set_match` output both the values from the first set and from the second set.
 
