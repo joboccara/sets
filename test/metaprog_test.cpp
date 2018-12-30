@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include "metaprog.hpp"
+#include "../include/detail/metaprog.hpp"
 
 #include <iterator>
 #include <map>

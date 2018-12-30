@@ -1,7 +1,7 @@
 #include "catch.hpp"
 
-#include "algorithm.hpp"
-#include "set_logical_operation.hpp"
+#include "../include/detail/algorithm.hpp"
+#include "../include/set_logical_operation.hpp"
 
 #include <set>
 #include <vector>

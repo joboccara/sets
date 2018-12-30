@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include "set_share_element.hpp"
+#include "../include/set_share_element.hpp"
 
 #include <set>
 

@@ -1,7 +1,7 @@
 #include "catch.hpp"
 
-#include "algorithm.hpp"
-#include "set_match.hpp"
+#include "../include/detail/algorithm.hpp"
+#include "../include/set_match.hpp"
 
 #include <iterator>
 #include <set>

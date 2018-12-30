@@ -1,6 +1,6 @@
-#include "algorithm.hpp"
 #include "catch.hpp"
-#include "set_segregate.hpp"
+#include "../include/detail/algorithm.hpp"
+#include "../include/set_segregate.hpp"
 
 #include <iostream>
 #include <iterator>

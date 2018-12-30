@@ -1,6 +1,7 @@
 #include "catch.hpp"
-#include "algorithm.hpp"
-#include "set_aggregate.hpp"
+
+#include "../include/detail/algorithm.hpp"
+#include "../include/set_aggregate.hpp"
 
 #include <map>
 #include <string>
