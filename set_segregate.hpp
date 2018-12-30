@@ -1,5 +1,5 @@
-#ifndef SET_SEGGREGATE_HPP
-#define SET_SEGGREGATE_HPP
+#ifndef SET_SEGREGATE_HPP
+#define SET_SEGREGATE_HPP
 
 #include "metaprog.hpp"
 

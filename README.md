@@ -99,6 +99,17 @@ OutputIterator set_match(Range1 const& range1, Range2 const& range2,
 
 The output is sorted.
 
+## `set_share_element`
+
+`set_share_element` takes two sets and outputs a `bool`, indicating whether their is at least one element in common (in terms of equivalence) between the two sets.
+
+Like the other algorithms on sets, `set_share_element` operates in linear complexity. It stops whenever it finds a common element (or when it reaches the end of the sets if they have no common elements).
+
+```cpp
+template<class LeftRange, class RightRange, typename Compare>
+bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
+```
+
 ## Feedback and contributions welcome
 
 This is an experimental library to complement the STL algorithms on sets. If you see other algorithms to add, or better names for the algorithms in the library, or any other suggestion, feel free to provide feedback or contribute!
