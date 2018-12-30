@@ -9,32 +9,32 @@
 
 TEST_CASE("vector underlying type")
 {
-    REQUIRE(typeid(range_underlying_type<std::vector<std::string>>) == typeid(std::string));
+    REQUIRE(std::is_same<range_underlying_type<std::vector<std::string>>, std::string>::value);
 }
 
 TEST_CASE("map underlying type")
 {
-    REQUIRE(typeid(range_underlying_type<std::map<int, std::string>>) == typeid(std::pair<const int, std::string>));
+    REQUIRE(std::is_same<range_underlying_type<std::map<int, std::string>>, std::pair<const int, std::string> >::value);
 }
 
 TEST_CASE("vector iterator underlying type")
 {
-    REQUIRE(typeid(iterator_underlying_type<std::vector<std::string>::iterator>) == typeid(std::string));
+    REQUIRE(std::is_same<iterator_underlying_type<std::vector<std::string>::iterator>, std::string >::value);
 }
 
 TEST_CASE("map iterator underlying type")
 {
-    REQUIRE(typeid(iterator_underlying_type<std::map<int, std::string>::iterator>) == typeid(std::pair<const int, std::string>));
+    REQUIRE(std::is_same<iterator_underlying_type<std::map<int, std::string>::iterator>, std::pair<const int, std::string> >::value);
 }
 
 TEST_CASE("back inserter underlying type")
 {
-    REQUIRE(typeid(iterator_underlying_type<std::back_insert_iterator<std::vector<std::string>>>) == typeid(std::string));
+    REQUIRE(std::is_same<iterator_underlying_type<std::back_insert_iterator<std::vector<std::string>>>, std::string >::value);
 }
 
 TEST_CASE("inserter underlying type")
 {
-    REQUIRE(typeid(iterator_underlying_type<std::insert_iterator<std::set<std::string>>>) == typeid(std::string));
+    REQUIRE(std::is_same<iterator_underlying_type<std::insert_iterator<std::set<std::string>>>, std::string >::value);
 }
 
 TEST_CASE("pair of int is a pair")
