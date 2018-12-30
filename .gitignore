@@ -30,3 +30,6 @@ main
 *.exe
 *.out
 *.app
+
+.DS_Store
+Sets.xcodeproj/
