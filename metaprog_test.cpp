@@ -47,16 +47,6 @@ TEST_CASE("int is not a pair")
     REQUIRE(!is_pair<int>::value);
 }
 
-TEST_CASE("first type in pair")
-{
-    REQUIRE(typeid(get_pair_first<std::pair<int, std::string>>) == typeid(int));
-}
-
-TEST_CASE("second type in pair")
-{
-    REQUIRE(typeid(get_pair_second<std::pair<int, std::string>>) == typeid(std::string));
-}
-
 TEST_CASE("both contains left and right")
 {
     REQUIRE(BothContainsLeftAndRight
