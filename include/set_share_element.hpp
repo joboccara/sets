@@ -6,27 +6,19 @@ bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange,
 {
     auto itLeft = leftRange.begin();
     auto itRight = rightRange.begin();
-    while (itLeft != leftRange.end())
+    while (itLeft != leftRange.end() && itRight != rightRange.end())
     {
-        if (itRight == rightRange.end())
-        {
-            return false;
-        }
-        
         if (comp(*itLeft, *itRight))
         {
-            itLeft++;
+            ++itLeft;
+        }
+        else if (comp(*itRight, *itLeft))
+        {
+            ++itRight;
         }
         else
         {
-            if (!comp(*itRight, *itLeft))
-            {
-                return true;
-            }
-            else
-            {
-                itRight++;
-            }
+            return true;
         }
     }
     return false;
