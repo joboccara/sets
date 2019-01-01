@@ -14,25 +14,25 @@ void set_segregate_impl(LeftRange const& leftRange, RightRange const& rightRange
                          OutputItLeft leftOnly, OutputItBoth both, OutputItRight rightOnly,
                          Compare comp, AddToBoth addToBoth)
 {
-    auto itLeft = leftRange.begin();
-    auto itRight = rightRange.begin();
-    while (itLeft != leftRange.end() && itRight != rightRange.end())
+    auto left = leftRange.begin();
+    auto right = rightRange.begin();
+    while (left != leftRange.end() && right != rightRange.end())
     {
-        if (comp(*itLeft, *itRight))
+        if (comp(*left, *right))
         {
-            *leftOnly++ = *itLeft++;
+            *leftOnly++ = *left++;
         }
-        else if (comp(*itRight, *itLeft))
+        else if (comp(*right, *left))
         {
-            *rightOnly++ = *itRight++;
+            *rightOnly++ = *right++;
         }
         else
         {
-            *both++ = addToBoth(*itLeft++, *itRight++);
+            *both++ = addToBoth(*left++, *right++);
         }
     }
-    std::copy(itLeft, end(leftRange), leftOnly);
-    std::copy(itRight, end(rightRange), rightOnly);
+    std::copy(left, end(leftRange), leftOnly);
+    std::copy(right, end(rightRange), rightOnly);
 }
 
 struct AddPairToBoth

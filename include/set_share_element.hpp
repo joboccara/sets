@@ -4,17 +4,17 @@
 template<class LeftRange, class RightRange, typename Compare>
 bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
 {
-    auto itLeft = leftRange.begin();
-    auto itRight = rightRange.begin();
-    while (itLeft != leftRange.end() && itRight != rightRange.end())
+    auto left = leftRange.begin();
+    auto right = rightRange.begin();
+    while (left != leftRange.end() && right != rightRange.end())
     {
-        if (comp(*itLeft, *itRight))
+        if (comp(*left, *right))
         {
-            ++itLeft;
+            ++left;
         }
-        else if (comp(*itRight, *itLeft))
+        else if (comp(*right, *left))
         {
-            ++itRight;
+            ++right;
         }
         else
         {
