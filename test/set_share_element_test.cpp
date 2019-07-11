@@ -20,3 +20,20 @@ TEST_CASE("set_share_element")
     REQUIRE(!set_share_element(std::set<int>{}, std::set<int>{2, 3, 4}));
     REQUIRE(!set_share_element(std::set<int>{}, std::set<int>{}));
 }
+
+template <typename Range1, typename Range2>
+bool isSameAsStdIncludes(Range1 const& range1, Range2 const& range2)
+{
+    return includes(range1, range2) == std::includes(begin(range1), end(range1), begin(range2), end(range2));
+}
+
+TEST_CASE("includes")
+{
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{2,3}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{2,3,4}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{2,4,5}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{5,6}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,1,2}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,1}));
+    REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,6,7}));
+}
