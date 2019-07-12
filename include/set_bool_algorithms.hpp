@@ -162,12 +162,6 @@ bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<type
                                 FinishedTraversal<BoolActionType::False>{});
 }
 
-template<class LeftRange, class RightRange>
-bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange)
-{
-    return set_share_element(leftRange, rightRange, std::less<typename LeftRange::value_type>{});
-}
-
 template<class LeftRange, class RightRange, typename Compare>
 bool includes(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
 {
