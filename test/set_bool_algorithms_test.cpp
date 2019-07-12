@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include "../include/set_share_element.hpp"
+#include "../include/set_bool_algorithms.hpp"
 
 #include <set>
 
@@ -36,4 +36,20 @@ TEST_CASE("includes")
     REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,1,2}));
     REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,1}));
     REQUIRE(isSameAsStdIncludes(std::set<int>{1,2,3,4}, std::set<int>{0,6,7}));
+}
+
+TEST_CASE("is_prefix_of")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (is_prefix_of(set{1, 2, 3, 4}, set{1, 2, 3, 4, 5, 6}));
+    
+    REQUIRE      (is_prefix_of(set{},           set{1, 2, 3, 4}));
+    REQUIRE_FALSE(is_prefix_of(set{1, 2, 3, 4}, set{}));
+    REQUIRE      (is_prefix_of(set{},           set{1, 2, 3, 4}));
+    
+    REQUIRE_FALSE(is_prefix_of(set{2, 3, 4, 5}, set{1, 2, 3, 4, 5}));
+    REQUIRE_FALSE(is_prefix_of(set{2, 3, 4},    set{1, 2, 3, 4, 5}));
+    REQUIRE_FALSE(is_prefix_of(set{2, 3, 4},    set{1, 2, 3, 5}));
+    REQUIRE_FALSE(is_prefix_of(set{1, 3, 4},    set{1, 2, 3, 4}));
 }
