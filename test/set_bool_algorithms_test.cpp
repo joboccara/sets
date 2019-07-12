@@ -100,6 +100,22 @@ TEST_CASE("disjoint")
     REQUIRE_FALSE(disjoint(set{1, 2, 3, 5}, set{0, 2, 5, 6}));
 }
 
+TEST_CASE("equivalent")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (equivalent(set{1, 2, 3},    set{1, 2, 3}));
+
+    REQUIRE      (equivalent(set{},           set{}));
+    REQUIRE_FALSE(equivalent(set{},           set{1, 2, 3}));
+    REQUIRE_FALSE(equivalent(set{1, 2, 3},    set{}));
+
+    REQUIRE_FALSE(equivalent(set{1, 2, 3},    set{1, 2, 3, 4}));
+    REQUIRE_FALSE(equivalent(set{1, 2, 3, 4}, set{1, 2, 3}));
+    REQUIRE_FALSE(equivalent(set{1, 2, 4},    set{1, 2, 3}));
+    REQUIRE_FALSE(equivalent(set{2, 3, 4},    set{1, 2, 3}));
+}
+
 TEST_CASE("is_before")
 {
     using set = std::set<int>;

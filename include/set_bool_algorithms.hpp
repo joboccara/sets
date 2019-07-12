@@ -11,7 +11,8 @@ enum class BoolActionType
     True,
     False,
     HasReachedEndOfFirst,
-    HasReachedEndOfSecond
+    HasReachedEndOfSecond,
+    HasReachedEndOfBoth
 };
 
 template<BoolActionType boolActionType>
@@ -63,6 +64,16 @@ struct BoolAction<BoolActionType::HasReachedEndOfSecond>
     bool operator()(Iterator1&&, End1&&, Iterator2&& it2, End2&& end2)
     {
         return it2 == end2;
+    }
+};
+
+template<>
+struct BoolAction<BoolActionType::HasReachedEndOfBoth>
+{
+    template<typename Iterator1, typename End1, typename Iterator2, typename End2>
+    bool operator()(Iterator1&& it1, End1&& end1, Iterator2&& it2, End2&& end2)
+    {
+        return it1 == end1 && it2 == end2;
     }
 };
 
@@ -175,13 +186,23 @@ bool includes(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std:
                                 FinishedTraversal<BoolActionType::HasReachedEndOfSecond>{});
 }
 
-
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
 bool disjoint(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return !set_share_element(FWD(set1), FWD(set2), comp);
 }
 
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool equivalent(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+{
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::False>{},
+                                SecondLessThanFirst<BoolActionType::False>{},
+                                BothEquivalent<BoolActionType::MoveOn>{},
+                                FinishedTraversal<BoolActionType::HasReachedEndOfBoth>{});
+}
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
 bool is_before(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})

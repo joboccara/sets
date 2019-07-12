@@ -122,6 +122,16 @@ template <typename Set1, typename Set2, typename Compare = std::less<>>
 bool disjoint(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
 ```
 
+## `equivalent`
+
+`equivalent` takes two sorted collections and returns a `bool` indicating whether both collections contains only equivalent elements.
+It is in the same sprit as `std::equal`, but where `std::equal` uses equality (based on `==`), `equivalent` uses [equivalence](https://www.fluentcpp.com/2017/02/16/custom-comparison-equality-equivalence-stl/ "Equality, equivalence and custom comparisons with the STL") (based on `<`) instead for correctness for operating on sorted collections.
+
+```cpp
+template <typename Set1, typename Set2, typename Compare = std::less<>>
+bool equivalent(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
+```
+
 ## `is_prefix_of`
 
 `is_prefix_of` takes two sorted collections and returns a `bool` indicating whether the elements of the first one are contained in a contiguous manner at the beginning of the second one.
