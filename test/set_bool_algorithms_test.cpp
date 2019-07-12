@@ -47,7 +47,8 @@ TEST_CASE("is_prefix_of")
     REQUIRE      (is_prefix_of(set{},           set{1, 2, 3, 4}));
     REQUIRE_FALSE(is_prefix_of(set{1, 2, 3, 4}, set{}));
     REQUIRE      (is_prefix_of(set{},           set{1, 2, 3, 4}));
-    
+    REQUIRE      (is_prefix_of(set{},           set{}));
+
     REQUIRE_FALSE(is_prefix_of(set{1, 2, 3, 4, 5, 6}, set{1, 2, 3, 4}));
     REQUIRE_FALSE(is_prefix_of(set{2, 3, 4, 5}, set{1, 2, 3, 4, 5}));
     REQUIRE_FALSE(is_prefix_of(set{2, 3, 4},    set{1, 2, 3, 4, 5}));
