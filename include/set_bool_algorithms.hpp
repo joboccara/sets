@@ -164,7 +164,7 @@ bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<type
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool includes(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool includes(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return set_bool_information(FWD(set1),
                                 FWD(set2),
@@ -173,6 +173,42 @@ bool includes(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::r
                                 SecondLessThanFirst<BoolActionType::False>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
                                 FinishedTraversal<BoolActionType::HasReachedEndOfSecond>{});
+}
+
+
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool disjoint(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+{
+    return !set_share_element(FWD(set1), FWD(set2), comp);
+}
+
+
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool is_before(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+{
+    if (begin(set2) == end(set2)) return false;
+    
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::MoveOn>{},
+                                SecondLessThanFirst<BoolActionType::False>{},
+                                BothEquivalent<BoolActionType::False>{},
+                                FinishedTraversal<BoolActionType::True>{});
+}
+
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool is_after(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+{
+    if (begin(set1) == end(set1)) return false;
+    
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::False>{},
+                                SecondLessThanFirst<BoolActionType::MoveOn>{},
+                                BothEquivalent<BoolActionType::False>{},
+                                FinishedTraversal<BoolActionType::True>{});
 }
 
 #endif /* SET_BOOL_ALGORITHMS_HPP */

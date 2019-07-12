@@ -73,3 +73,83 @@ TEST_CASE("is_prefix_of_other")
     REQUIRE_FALSE(is_prefix_of_other(set{2, 3, 4},    set{1, 2, 3, 5}));
     REQUIRE_FALSE(is_prefix_of_other(set{1, 3, 4},    set{1, 2, 3, 4}));
 }
+
+TEST_CASE("disjoint")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (disjoint(set{1, 2, 3, 4}, set{5, 6, 7}));
+    REQUIRE      (disjoint(set{1, 2, 3},    set{5, 6, 7}));
+    REQUIRE      (disjoint(set{1, 2, 3},    set{5, 6, 7, 8}));
+    REQUIRE      (disjoint(set{5, 6, 7},    set{1, 2, 3, 4}));
+    REQUIRE      (disjoint(set{5, 6, 7, 8}, set{1, 2, 3}));
+    REQUIRE      (disjoint(set{1, 3, 5, 7}, set{2, 4, 6}));
+    REQUIRE      (disjoint(set{1, 3, 5},    set{0, 2, 4, 6}));
+
+    REQUIRE      (disjoint(set{},           set{1, 2, 3}));
+    REQUIRE      (disjoint(set{1, 2, 3},    set{}));
+    REQUIRE      (disjoint(set{},           set{}));
+    
+    REQUIRE_FALSE(disjoint(set{1, 2, 5},    set{0, 2, 4, 6}));
+    REQUIRE_FALSE(disjoint(set{1, 3, 5},    set{1, 2, 4, 6}));
+    REQUIRE_FALSE(disjoint(set{1, 3, 5},    set{0, 2, 4, 5}));
+    REQUIRE_FALSE(disjoint(set{1, 3, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(disjoint(set{1, 2, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(disjoint(set{1, 2, 5},    set{1, 2, 6}));
+    REQUIRE_FALSE(disjoint(set{1, 2, 5},    set{0, 2, 5}));
+    REQUIRE_FALSE(disjoint(set{1, 2, 3, 5}, set{0, 2, 5, 6}));
+}
+
+TEST_CASE("is_before")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (is_before(set{1, 2, 3, 4}, set{5, 6, 7}));
+    REQUIRE      (is_before(set{1, 2, 3},    set{5, 6, 7}));
+    REQUIRE      (is_before(set{1, 2, 3},    set{5, 6, 7, 8}));
+    
+    REQUIRE      (is_before(set{},           set{1, 2, 3}));
+    REQUIRE_FALSE(is_before(set{1, 2, 3},    set{}));
+    REQUIRE_FALSE(is_before(set{},           set{}));
+    
+    REQUIRE_FALSE(is_before(set{5, 6, 7},    set{1, 2, 3, 4}));
+    REQUIRE_FALSE(is_before(set{5, 6, 7, 8}, set{1, 2, 3}));
+    REQUIRE_FALSE(is_before(set{1, 3, 5, 7}, set{2, 4, 6}));
+    REQUIRE_FALSE(is_before(set{1, 3, 5},    set{0, 2, 4, 6}));
+    REQUIRE_FALSE(is_before(set{1, 2, 3},    set{3, 4}));
+    REQUIRE_FALSE(is_before(set{1, 2, 5},    set{0, 2, 4, 6}));
+    REQUIRE_FALSE(is_before(set{1, 3, 5},    set{1, 2, 4, 6}));
+    REQUIRE_FALSE(is_before(set{1, 3, 5},    set{0, 2, 4, 5}));
+    REQUIRE_FALSE(is_before(set{1, 3, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(is_before(set{1, 2, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(is_before(set{1, 2, 5},    set{1, 2, 6}));
+    REQUIRE_FALSE(is_before(set{1, 2, 5},    set{0, 2, 5}));
+    REQUIRE_FALSE(is_before(set{1, 2, 3, 5}, set{0, 2, 5, 6}));
+}
+
+TEST_CASE("is_after")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (is_after(set{5, 6, 7},    set{1, 2, 3, 4}));
+    REQUIRE      (is_after(set{5, 6, 7, 8}, set{1, 2, 3}));
+    
+    REQUIRE      (is_after(set{1, 2, 3},    set{}));
+    REQUIRE_FALSE(is_after(set{},           set{1, 2, 3}));
+    REQUIRE_FALSE(is_after(set{},           set{}));
+    
+    REQUIRE_FALSE(is_after(set{1, 2, 3, 4}, set{5, 6, 7}));
+    REQUIRE_FALSE(is_after(set{1, 2, 3},    set{5, 6, 7}));
+    REQUIRE_FALSE(is_after(set{1, 2, 3},    set{5, 6, 7, 8}));
+    REQUIRE_FALSE(is_after(set{1, 3, 5, 7}, set{2, 4, 6}));
+    REQUIRE_FALSE(is_after(set{1, 3, 5},    set{0, 2, 4, 6}));
+    REQUIRE_FALSE(is_after(set{1, 2, 3},    set{3, 4}));
+    REQUIRE_FALSE(is_after(set{1, 2, 5},    set{0, 2, 4, 6}));
+    REQUIRE_FALSE(is_after(set{1, 3, 5},    set{1, 2, 4, 6}));
+    REQUIRE_FALSE(is_after(set{1, 3, 5},    set{0, 2, 4, 5}));
+    REQUIRE_FALSE(is_after(set{1, 3, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(is_after(set{1, 2, 5},    set{1, 3, 5}));
+    REQUIRE_FALSE(is_after(set{1, 2, 5},    set{1, 2, 6}));
+    REQUIRE_FALSE(is_after(set{1, 2, 5},    set{0, 2, 5}));
+    REQUIRE_FALSE(is_after(set{1, 2, 3, 5}, set{0, 2, 5, 6}));
+}
