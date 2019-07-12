@@ -3,14 +3,15 @@
 
 #include "detail/FWD.hpp"
 #include <functional>
+#include <type_traits>
 
 enum class BoolActionType
 {
     MoveOn,
     True,
     False,
-    hasReachedEndOfFirst,
-    hasReachedEndOfSecond
+    HasReachedEndOfFirst,
+    HasReachedEndOfSecond
 };
 
 template<BoolActionType boolActionType>
@@ -46,7 +47,7 @@ struct BoolAction<BoolActionType::False>
     }};
 
 template<>
-struct BoolAction<BoolActionType::hasReachedEndOfFirst>
+struct BoolAction<BoolActionType::HasReachedEndOfFirst>
 {
     template<typename Iterator1, typename End1, typename Iterator2, typename End2>
     bool operator()(Iterator1&& it1, End1&& end1, Iterator2&&, End2&&)
@@ -56,7 +57,7 @@ struct BoolAction<BoolActionType::hasReachedEndOfFirst>
 };
 
 template<>
-struct BoolAction<BoolActionType::hasReachedEndOfSecond>
+struct BoolAction<BoolActionType::HasReachedEndOfSecond>
 {
     template<typename Iterator1, typename End1, typename Iterator2, typename End2>
     bool operator()(Iterator1&&, End1&&, Iterator2&& it2, End2&& end2)
@@ -126,8 +127,8 @@ bool set_bool_information(Set1&& set1,
     return resultForFinishedTraversal(it1, end(set1), it2, end(set2));
 }
 
-template <typename Set1, typename Set2, typename Compare = std::less<typename Set1::value_type>>
-bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename Set1::value_type>{})
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return set_bool_information(FWD(set1),
                                 FWD(set2),
@@ -135,11 +136,11 @@ bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename 
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
                                 SecondLessThanFirst<BoolActionType::False>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
-                                FinishedTraversal<BoolActionType::hasReachedEndOfFirst>{});
+                                FinishedTraversal<BoolActionType::HasReachedEndOfFirst>{});
 }
 
-template <typename Set1, typename Set2, typename Compare = std::less<typename Set1::value_type>>
-bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename Set1::value_type>{})
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return set_bool_information(FWD(set1),
                                 FWD(set2),
@@ -150,8 +151,8 @@ bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typ
                                 FinishedTraversal<BoolActionType::True>{});
 }
 
-template <typename Set1, typename Set2, typename Compare = std::less<typename Set1::value_type>>
-bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename Set1::value_type>{})
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return set_bool_information(FWD(set1),
                                 FWD(set2),
@@ -162,34 +163,16 @@ bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<type
                                 FinishedTraversal<BoolActionType::False>{});
 }
 
-template<class LeftRange, class RightRange, typename Compare>
-bool includes(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
+template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
+bool includes(Set1&& set1, Set2&& set2, std::less<int> comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    auto left = leftRange.begin();
-    auto right = rightRange.begin();
-    while (left != leftRange.end() && right != rightRange.end())
-    {
-        if (comp(*left, *right))
-        {
-            ++left;
-        }
-        else if (comp(*right, *left))
-        {
-            return false;
-        }
-        else
-        {
-            ++left;
-            ++right;
-        }
-    }
-    return right == rightRange.end();
-}
-
-template<class LeftRange, class RightRange>
-bool includes(LeftRange const& leftRange, RightRange const& rightRange)
-{
-    return includes(leftRange, rightRange, std::less<typename LeftRange::value_type>{});
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::MoveOn>{},
+                                SecondLessThanFirst<BoolActionType::False>{},
+                                BothEquivalent<BoolActionType::MoveOn>{},
+                                FinishedTraversal<BoolActionType::HasReachedEndOfSecond>{});
 }
 
 #endif /* SET_BOOL_ALGORITHMS_HPP */
