@@ -112,6 +112,7 @@ TEST_CASE("is_before")
     REQUIRE_FALSE(is_before(set{1, 2, 3},    set{}));
     REQUIRE_FALSE(is_before(set{},           set{}));
     
+    REQUIRE_FALSE(is_before(set{1, 2, 3},    set{3, 4}));
     REQUIRE_FALSE(is_before(set{5, 6, 7},    set{1, 2, 3, 4}));
     REQUIRE_FALSE(is_before(set{5, 6, 7, 8}, set{1, 2, 3}));
     REQUIRE_FALSE(is_before(set{1, 3, 5, 7}, set{2, 4, 6}));
