@@ -164,7 +164,7 @@ bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<type
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool includes(Set1&& set1, Set2&& set2, std::less<int> comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool includes(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return set_bool_information(FWD(set1),
                                 FWD(set2),
