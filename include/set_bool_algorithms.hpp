@@ -150,27 +150,16 @@ bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typ
                                 FinishedTraversal<BoolActionType::True>{});
 }
 
-template<class LeftRange, class RightRange, typename Compare>
-bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
+template <typename Set1, typename Set2, typename Compare = std::less<typename Set1::value_type>>
+bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename Set1::value_type>{})
 {
-    auto left = leftRange.begin();
-    auto right = rightRange.begin();
-    while (left != leftRange.end() && right != rightRange.end())
-    {
-        if (comp(*left, *right))
-        {
-            ++left;
-        }
-        else if (comp(*right, *left))
-        {
-            ++right;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    return false;
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::MoveOn>{},
+                                SecondLessThanFirst<BoolActionType::MoveOn>{},
+                                BothEquivalent<BoolActionType::True>{},
+                                FinishedTraversal<BoolActionType::False>{});
 }
 
 template<class LeftRange, class RightRange>
