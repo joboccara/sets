@@ -110,6 +110,18 @@ template<class LeftRange, class RightRange, typename Compare>
 bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
 ```
 
+## `disjoint`
+
+`disjoint` takes two sorted collections and returns a `bool` equal to `true` if there is no common element between the two collections.
+
+Complexity: sum of the sizes of the sets.
+Pre-conditions: expects two sorted collections as inputs.
+
+```cpp
+template <typename Set1, typename Set2, typename Compare = std::less<>>
+bool disjoint(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
+```
+
 ## `is_prefix_of`
 
 `is_prefix_of` takes two sorted collections and returns a `bool` indicating whether the elements of the first one are contained in a contiguous manner at the beginning of the second one.
@@ -121,6 +133,32 @@ Pre-conditions: expects two sorted collections as inputs.
 ```cpp
 template <typename Set1, typename Set2, typename Compare = std::less<>>
 bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
+```
+
+## `is_before`
+
+`is_before` takes two sorted collections and returns a `bool` indicating whether all the elements of the first collection are all smaller than the smallest element of the second one.
+By convention, the empty set `is_before` any other set.
+
+Complexity: sum of the sizes of the sets.
+Pre-conditions: expects two sorted collections as inputs.
+
+```cpp
+template <typename Set1, typename Set2, typename Compare = std::less<>>
+bool is_before(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
+```
+
+## `is_after`
+
+`is_after` takes two sorted collections and returns a `bool` indicating whether all the elements of the second collection are all smaller than the smallest element of the first one.
+By convention, any non-empty set `is_after` the empty set.
+
+Complexity: sum of the sizes of the sets.
+Pre-conditions: expects two sorted collections as inputs.
+
+```cpp
+template <typename Set1, typename Set2, typename Compare = std::less<>>
+bool is_after(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
 ```
 
 ## Feedback and contributions welcome
