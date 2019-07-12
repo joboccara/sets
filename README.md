@@ -110,6 +110,19 @@ template<class LeftRange, class RightRange, typename Compare>
 bool set_share_element(LeftRange const& leftRange, RightRange const& rightRange, Compare comp)
 ```
 
+## `is_prefix_of`
+
+`is_prefix_of` takes two sorted collections and returns a `bool` indicating whether the elements of the first one are contained in a contiguous manner at the beginning of the second one.
+Note that this is not equivalent to using the `std::mismatch` algorithm, that uses equality (`==`). Since it operates on sorted collections, `is_prefix_of` uses [equivalence and not equality](https://www.fluentcpp.com/2017/02/16/custom-comparison-equality-equivalence-stl/ "Equality, equivalence and custom comparisons with the STL") for correctness.
+
+Complexity: sum of the sizes of the sets.
+Pre-conditions: expects two sorted collections as inputs.
+
+```cpp
+template <typename Set1, typename Set2, typename Compare = std::less<>>
+bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<>{})
+```
+
 ## Feedback and contributions welcome
 
 This is an experimental library to complement the STL algorithms on sets. If you see other algorithms to add, or better names for the algorithms in the library, or any other suggestion, feel free to provide feedback or contribute!
