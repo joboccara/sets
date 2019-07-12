@@ -54,3 +54,21 @@ TEST_CASE("is_prefix_of")
     REQUIRE_FALSE(is_prefix_of(set{2, 3, 4},    set{1, 2, 3, 5}));
     REQUIRE_FALSE(is_prefix_of(set{1, 3, 4},    set{1, 2, 3, 4}));
 }
+
+TEST_CASE("is_prefix_of_other")
+{
+    using set = std::set<int>;
+    
+    REQUIRE      (is_prefix_of_other(set{1, 2, 3, 4}, set{1, 2, 3, 4, 5, 6}));
+    REQUIRE      (is_prefix_of_other(set{1, 2, 3, 4, 5, 6}, set{1, 2, 3, 4}));
+
+    REQUIRE      (is_prefix_of_other(set{},           set{1, 2, 3, 4}));
+    REQUIRE      (is_prefix_of_other(set{1, 2, 3, 4}, set{}));
+    REQUIRE      (is_prefix_of_other(set{},           set{1, 2, 3, 4}));
+    REQUIRE      (is_prefix_of_other(set{},           set{}));
+
+    REQUIRE_FALSE(is_prefix_of_other(set{2, 3, 4, 5}, set{1, 2, 3, 4, 5}));
+    REQUIRE_FALSE(is_prefix_of_other(set{2, 3, 4},    set{1, 2, 3, 4, 5}));
+    REQUIRE_FALSE(is_prefix_of_other(set{2, 3, 4},    set{1, 2, 3, 5}));
+    REQUIRE_FALSE(is_prefix_of_other(set{1, 3, 4},    set{1, 2, 3, 4}));
+}

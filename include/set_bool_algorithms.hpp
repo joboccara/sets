@@ -26,13 +26,24 @@ template<>
 struct BoolAction<BoolActionType::True>
 {
     bool operator()() { return true; }
+
+    template<typename Iterator1, typename End1, typename Iterator2, typename End2>
+    bool operator()(Iterator1&&, End1&&, Iterator2&&, End2&&)
+    {
+        return true;
+    }
 };
 
 template<>
 struct BoolAction<BoolActionType::False>
 {
     bool operator()() { return false; }
-};
+
+    template<typename Iterator1, typename End1, typename Iterator2, typename End2>
+    bool operator()(Iterator1&&, End1&&, Iterator2&&, End2&&)
+    {
+        return false;
+    }};
 
 template<>
 struct BoolAction<BoolActionType::hasReachedEndOfFirst>
@@ -125,6 +136,18 @@ bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename 
                                 SecondLessThanFirst<BoolActionType::False>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
                                 FinishedTraversal<BoolActionType::hasReachedEndOfFirst>{});
+}
+
+template <typename Set1, typename Set2, typename Compare = std::less<typename Set1::value_type>>
+bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename Set1::value_type>{})
+{
+    return set_bool_information(FWD(set1),
+                                FWD(set2),
+                                comp,
+                                FirstLessThanSecond<BoolActionType::MoveOn>{},
+                                SecondLessThanFirst<BoolActionType::False>{},
+                                BothEquivalent<BoolActionType::MoveOn>{},
+                                FinishedTraversal<BoolActionType::True>{});
 }
 
 template<class LeftRange, class RightRange, typename Compare>
