@@ -51,7 +51,8 @@ TEST_CASE("set_match with map")
     std::map<int, char> input1 = {{1,'1'}, {2,'2'}, {3,'3'}, {5,'5'}, {7,'7'}, {8, '8'}};
     std::map<int, std::string> input2 = {{2,"two"}, {3,"three"}, {4,"four"}, {5,"five"}, {7,"seven"}, {11,"eleven"}};
     
-    std::vector<std::pair<std::pair<int, char>, std::pair<int, std::string>>> expected = { { {2,'2'}, {2,"two"}   },
+    std::vector<std::pair<std::pair<int, char>, std::pair<int, std::string>>> expected =
+      { { {2,'2'}, {2,"two"}   },
         { {3,'3'}, {3,"three"} },
         { {5,'5'}, {5,"five"}  },
         { {7,'7'}, {7,"seven"} } };
