@@ -7,7 +7,7 @@ namespace ranges
 {
     
 template <typename Range>
-auto size(Range const& range) -> decltype(std::distance(begin(range), end(range)))
+auto raangeSize(Range const& range) -> decltype(std::distance(begin(range), end(range)))
 {
     return std::distance(begin(range), end(range));
 }
