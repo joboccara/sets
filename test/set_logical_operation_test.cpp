@@ -3,6 +3,7 @@
 #include "../include/detail/algorithm.hpp"
 #include "../include/set_logical_operation.hpp"
 
+#include <functional>
 #include <set>
 #include <vector>
 
@@ -22,7 +23,7 @@ TEST_CASE("set_logical_operation")
     
     SECTION("and")
     {
-        fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft && inRight;});
+        fluent::set_logical_operation(left, right, std::back_inserter(results), std::logical_and<int>{});
         std::set_intersection(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
         REQUIRE(ranges::equal(results, expected));
     }
@@ -64,7 +65,7 @@ TEST_CASE("set_logical_operation")
     
     SECTION("or")
     {
-        fluent::set_logical_operation(left, right, std::back_inserter(results), [](bool inLeft, bool inRight){ return inLeft || inRight;});
+        fluent::set_logical_operation(left, right, std::back_inserter(results), std::logical_or<int>{});
         std::set_union(begin(left), end(left), begin(right), end(right), std::back_inserter(expected));
         REQUIRE(ranges::equal(results, expected));
     }
