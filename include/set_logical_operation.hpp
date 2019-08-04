@@ -14,48 +14,44 @@
 
 namespace fluent
 {
-namespace details
+template<typename SetA, typename SetB, typename OutputIterator, typename LogicalOperation>
+OutputIterator set_logical_operation(SetA&& setA, SetB&& setB, OutputIterator out, LogicalOperation logicalOperation)
 {
-    
-template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft, typename OutputIteratorBoth>
-OutputIterator set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft, OutputIteratorBoth outBoth)
-{
-    if (logicalOperation(false, true)) // in right and not in left
-    {
-        set_segregate(range1, range2, outLeft, outBoth, out);
-    }
-    else
-    {
-        set_segregate(range1, range2, outLeft, outBoth, dead_end_iterator());
-    }
-    return out;
-}
+    auto const includeElementsInAOnly = logicalOperation(true, false);
+    auto const includeElementsInBOnly = logicalOperation(false, true);
+    auto const includeElementsInBoth = logicalOperation(true, true);
 
-template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation, typename OutputIteratorLeft>
-OutputIterator set_logical_operation_impl(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation, OutputIteratorLeft outLeft)
-{
-    if (logicalOperation(true, true)) // both in left and in right
+    if (includeElementsInAOnly && includeElementsInBoth && includeElementsInBOnly)
     {
-        set_logical_operation_impl(range1, range2, out, logicalOperation, outLeft, out);
+        set_segregate(setA, setB, out, out, out);
     }
-    else
+    else if (includeElementsInAOnly && includeElementsInBoth && !includeElementsInBOnly)
     {
-        set_logical_operation_impl(range1, range2, out, logicalOperation, outLeft, dead_end_iterator());
+        set_segregate(setA, setB, out, out, dead_end_iterator{});
     }
-    return out;
-}
-} // namespace details
-    
-template<typename Range1, typename Range2, typename OutputIterator, typename LogicalOperation>
-OutputIterator set_logical_operation(Range1 const& range1, Range2 const& range2, OutputIterator out, LogicalOperation logicalOperation)
-{
-    if (logicalOperation(true, false)) // in left and not in right
+    else if (includeElementsInAOnly && !includeElementsInBoth && includeElementsInBOnly)
     {
-        details::set_logical_operation_impl(range1, range2, out, logicalOperation, out);
+        set_segregate(setA, setB, out, dead_end_iterator{}, out);
     }
-    else
+    else if (includeElementsInAOnly && !includeElementsInBoth && !includeElementsInBOnly)
     {
-        details::set_logical_operation_impl(range1, range2, out, logicalOperation, dead_end_iterator());
+        set_segregate(setA, setB, out, dead_end_iterator{}, dead_end_iterator{});
+    }
+    else if (!includeElementsInAOnly && includeElementsInBoth && includeElementsInBOnly)
+    {
+        set_segregate(setA, setB, dead_end_iterator{}, out, out);
+    }
+    else if (!includeElementsInAOnly && includeElementsInBoth && !includeElementsInBOnly)
+    {
+        set_segregate(setA, setB, dead_end_iterator{}, out, dead_end_iterator{});
+    }
+    else if (!includeElementsInAOnly && !includeElementsInBoth && includeElementsInBOnly)
+    {
+        set_segregate(setA, setB, dead_end_iterator{}, dead_end_iterator{}, out);
+    }
+    else if (!includeElementsInAOnly && !includeElementsInBoth && !includeElementsInBOnly)
+    {
+        set_segregate(setA, setB, dead_end_iterator{}, dead_end_iterator{}, dead_end_iterator{});
     }
     return out;
 }
