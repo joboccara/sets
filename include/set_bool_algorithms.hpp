@@ -8,11 +8,11 @@
 enum class BoolActionType
 {
     MoveOn,
-    True,
-    False,
-    HasReachedEndOfFirst,
-    HasReachedEndOfSecond,
-    HasReachedEndOfBoth
+    ReturnTrue,
+    ReturnFalse,
+    ReturnHasReachedEndOfFirst,
+    ReturnHasReachedEndOfSecond,
+    ReturnHasReachedEndOfBoth
 };
 
 template<BoolActionType boolActionType>
@@ -25,7 +25,7 @@ struct BoolAction<BoolActionType::MoveOn>
 };
 
 template<>
-struct BoolAction<BoolActionType::True>
+struct BoolAction<BoolActionType::ReturnTrue>
 {
     bool operator()() { return true; }
 
@@ -37,7 +37,7 @@ struct BoolAction<BoolActionType::True>
 };
 
 template<>
-struct BoolAction<BoolActionType::False>
+struct BoolAction<BoolActionType::ReturnFalse>
 {
     bool operator()() { return false; }
 
@@ -48,7 +48,7 @@ struct BoolAction<BoolActionType::False>
     }};
 
 template<>
-struct BoolAction<BoolActionType::HasReachedEndOfFirst>
+struct BoolAction<BoolActionType::ReturnHasReachedEndOfFirst>
 {
     template<typename Iterator1, typename End1, typename Iterator2, typename End2>
     bool operator()(Iterator1&& it1, End1&& end1, Iterator2&&, End2&&)
@@ -58,7 +58,7 @@ struct BoolAction<BoolActionType::HasReachedEndOfFirst>
 };
 
 template<>
-struct BoolAction<BoolActionType::HasReachedEndOfSecond>
+struct BoolAction<BoolActionType::ReturnHasReachedEndOfSecond>
 {
     template<typename Iterator1, typename End1, typename Iterator2, typename End2>
     bool operator()(Iterator1&&, End1&&, Iterator2&& it2, End2&& end2)
@@ -68,7 +68,7 @@ struct BoolAction<BoolActionType::HasReachedEndOfSecond>
 };
 
 template<>
-struct BoolAction<BoolActionType::HasReachedEndOfBoth>
+struct BoolAction<BoolActionType::ReturnHasReachedEndOfBoth>
 {
     template<typename Iterator1, typename End1, typename Iterator2, typename End2>
     bool operator()(Iterator1&& it1, End1&& end1, Iterator2&& it2, End2&& end2)
@@ -145,9 +145,9 @@ bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename 
                                 FWD(set2),
                                 comp,
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
-                                SecondLessThanFirst<BoolActionType::False>{},
+                                SecondLessThanFirst<BoolActionType::ReturnFalse>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
-                                FinishedTraversal<BoolActionType::HasReachedEndOfFirst>{});
+                                FinishedTraversal<BoolActionType::ReturnHasReachedEndOfFirst>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -157,9 +157,9 @@ bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typ
                                 FWD(set2),
                                 comp,
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
-                                SecondLessThanFirst<BoolActionType::False>{},
+                                SecondLessThanFirst<BoolActionType::ReturnFalse>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
-                                FinishedTraversal<BoolActionType::True>{});
+                                FinishedTraversal<BoolActionType::ReturnTrue>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -170,8 +170,8 @@ bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<type
                                 comp,
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
                                 SecondLessThanFirst<BoolActionType::MoveOn>{},
-                                BothEquivalent<BoolActionType::True>{},
-                                FinishedTraversal<BoolActionType::False>{});
+                                BothEquivalent<BoolActionType::ReturnTrue>{},
+                                FinishedTraversal<BoolActionType::ReturnFalse>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -181,9 +181,9 @@ bool includes(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std:
                                 FWD(set2),
                                 comp,
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
-                                SecondLessThanFirst<BoolActionType::False>{},
+                                SecondLessThanFirst<BoolActionType::ReturnFalse>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
-                                FinishedTraversal<BoolActionType::HasReachedEndOfSecond>{});
+                                FinishedTraversal<BoolActionType::ReturnHasReachedEndOfSecond>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -198,10 +198,10 @@ bool equivalent(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename st
     return set_bool_information(FWD(set1),
                                 FWD(set2),
                                 comp,
-                                FirstLessThanSecond<BoolActionType::False>{},
-                                SecondLessThanFirst<BoolActionType::False>{},
+                                FirstLessThanSecond<BoolActionType::ReturnFalse>{},
+                                SecondLessThanFirst<BoolActionType::ReturnFalse>{},
                                 BothEquivalent<BoolActionType::MoveOn>{},
-                                FinishedTraversal<BoolActionType::HasReachedEndOfBoth>{});
+                                FinishedTraversal<BoolActionType::ReturnHasReachedEndOfBoth>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -213,9 +213,9 @@ bool is_before(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std
                                 FWD(set2),
                                 comp,
                                 FirstLessThanSecond<BoolActionType::MoveOn>{},
-                                SecondLessThanFirst<BoolActionType::False>{},
-                                BothEquivalent<BoolActionType::False>{},
-                                FinishedTraversal<BoolActionType::True>{});
+                                SecondLessThanFirst<BoolActionType::ReturnFalse>{},
+                                BothEquivalent<BoolActionType::ReturnFalse>{},
+                                FinishedTraversal<BoolActionType::ReturnTrue>{});
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
@@ -226,10 +226,10 @@ bool is_after(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std:
     return set_bool_information(FWD(set1),
                                 FWD(set2),
                                 comp,
-                                FirstLessThanSecond<BoolActionType::False>{},
+                                FirstLessThanSecond<BoolActionType::ReturnFalse>{},
                                 SecondLessThanFirst<BoolActionType::MoveOn>{},
-                                BothEquivalent<BoolActionType::False>{},
-                                FinishedTraversal<BoolActionType::True>{});
+                                BothEquivalent<BoolActionType::ReturnFalse>{},
+                                FinishedTraversal<BoolActionType::ReturnTrue>{});
 }
 
 #endif /* SET_BOOL_ALGORITHMS_HPP */
