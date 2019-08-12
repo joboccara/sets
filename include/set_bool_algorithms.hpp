@@ -64,15 +64,15 @@ template<typename Action> struct BothEquivalent {};
 template<typename Action> struct FinishedTraversal {};
 
 template<typename SetA, typename SetB, typename Compare,
-         typename PredicateAlessThanB,
-         typename PredicateBlessThanA,
+         typename PredicateFirstLessThanSecond,
+         typename PredicateSecondLessThanFirst,
          typename PredicateBothEquivalent,
          typename PredicateFinishedTraversal>
 bool set_bool_information(SetA&& setA,
                           SetB&& setB,
                           Compare&& comp,
-                          FirstLessThanSecond<PredicateAlessThanB>,
-                          SecondLessThanFirst<PredicateBlessThanA>,
+                          FirstLessThanSecond<PredicateFirstLessThanSecond>,
+                          SecondLessThanFirst<PredicateSecondLessThanFirst>,
                           BothEquivalent<PredicateBothEquivalent>,
                           FinishedTraversal<PredicateFinishedTraversal>)
 {
@@ -83,24 +83,24 @@ bool set_bool_information(SetA&& setA,
     {
         if (comp(*it1, *it2))
         {
-            if (std::is_same<PredicateAlessThanB, MoveOn>::value)
+            if (std::is_same<PredicateFirstLessThanSecond, MoveOn>::value)
             {
                 ++it1;
             }
             else
             {
-                return PredicateAlessThanB::_();
+                return PredicateFirstLessThanSecond::_();
             }
         }
         else if (comp(*it2, *it1))
         {
-            if (std::is_same<PredicateBlessThanA, MoveOn>::value)
+            if (std::is_same<PredicateSecondLessThanFirst, MoveOn>::value)
             {
                 ++it2;
             }
             else
             {
-                return PredicateBlessThanA::_();
+                return PredicateSecondLessThanFirst::_();
             }
         }
         else
