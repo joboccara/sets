@@ -29,7 +29,8 @@ struct ReturnFalse
     static bool _(Iterator1&&, End1&&, Iterator2&&, End2&&)
     {
         return false;
-    }};
+    }
+};
 
 struct ReturnHasReachedEndOfFirst
 {
@@ -58,24 +59,17 @@ struct ReturnHasReachedEndOfBoth
     }
 };
 
-template<typename Action> struct FirstLessThanSecond {};
-template<typename Action> struct SecondLessThanFirst {};
-template<typename Action> struct BothEquivalent {};
-template<typename Action> struct FinishedTraversal {};
-
-template<typename SetA, typename SetB, typename Compare,
-         typename PredicateFirstLessThanSecond,
-         typename PredicateSecondLessThanFirst,
-         typename PredicateBothEquivalent,
-         typename PredicateFinishedTraversal>
-bool set_bool_information(SetA&& setA,
-                          SetB&& setB,
-                          Compare&& comp,
-                          FirstLessThanSecond<PredicateFirstLessThanSecond>,
-                          SecondLessThanFirst<PredicateSecondLessThanFirst>,
-                          BothEquivalent<PredicateBothEquivalent>,
-                          FinishedTraversal<PredicateFinishedTraversal>)
+template<typename PredicateFirstLessThanSecondPolicy,
+         typename PredicateSecondLessThanFirstPolicy,
+         typename PredicateBothEquivalentPolicy,
+         typename PredicateFinishedTraversalPolicy,
+         typename SetA, typename SetB, typename Compare>
+bool set_bool_information(SetA&& setA, SetB&& setB, Compare&& comp)
 {
+    using PredicateFirstLessThanSecond = typename PredicateFirstLessThanSecondPolicy::Predicate;
+    using PredicateSecondLessThanFirst = typename PredicateSecondLessThanFirstPolicy::Predicate;
+    using PredicateBothEquivalent = typename PredicateBothEquivalentPolicy::Predicate;
+    using PredicateFinishedTraversal = typename PredicateFinishedTraversalPolicy::Predicate;
     auto it1 = begin(setA);
     auto it2 = begin(setB);
     
@@ -119,98 +113,109 @@ bool set_bool_information(SetA&& setA,
     return PredicateFinishedTraversal::_(it1, end(setA), it2, end(setB));
 }
 
+template<typename T>
+struct FirstLessThanSecond
+{
+    using Predicate = T;
+};
+
+template<typename T>
+struct SecondLessThanFirst
+{
+    using Predicate = T;
+};
+
+template<typename T>
+struct BothEquivalent
+{
+    using Predicate = T;
+};
+
+template<typename T>
+struct FinishedTraversal
+{
+    using Predicate = T;
+};
+
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
 bool is_prefix_of(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<MoveOn>{},
-                                SecondLessThanFirst<ReturnFalse>{},
-                                BothEquivalent<MoveOn>{},
-                                FinishedTraversal<ReturnHasReachedEndOfFirst>{});
+    return set_bool_information<SecondLessThanFirst<ReturnFalse>,
+                                 FirstLessThanSecond<ReturnFalse>,
+                                 BothEquivalent<MoveOn>,
+                                 FinishedTraversal<ReturnHasReachedEndOfFirst>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool is_prefix_of_other(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<MoveOn>{},
-                                SecondLessThanFirst<ReturnFalse>{},
-                                BothEquivalent<MoveOn>{},
-                                FinishedTraversal<ReturnTrue>{});
+    return set_bool_information<SecondLessThanFirst<MoveOn>,
+                                FirstLessThanSecond<ReturnFalse>,
+                                BothEquivalent<MoveOn>,
+                                FinishedTraversal<ReturnTrue>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool set_share_element(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool set_share_element(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<MoveOn>{},
-                                SecondLessThanFirst<MoveOn>{},
-                                BothEquivalent<ReturnTrue>{},
-                                FinishedTraversal<ReturnFalse>{});
+
+    return set_bool_information<SecondLessThanFirst<MoveOn>,
+                                FirstLessThanSecond<MoveOn>,
+                                BothEquivalent<ReturnTrue>,
+                                FinishedTraversal<ReturnFalse>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool includes(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool includes(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<MoveOn>{},
-                                SecondLessThanFirst<ReturnFalse>{},
-                                BothEquivalent<MoveOn>{},
-                                FinishedTraversal<ReturnHasReachedEndOfSecond>{});
+    return set_bool_information<SecondLessThanFirst<MoveOn>,
+                                FirstLessThanSecond<ReturnFalse>,
+                                BothEquivalent<MoveOn>,
+                                FinishedTraversal<ReturnHasReachedEndOfSecond>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool disjoint(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool disjoint(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     return !set_share_element(FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool equivalent(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool equivalent(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<ReturnFalse>{},
-                                SecondLessThanFirst<ReturnFalse>{},
-                                BothEquivalent<MoveOn>{},
-                                FinishedTraversal<ReturnHasReachedEndOfBoth>{});
+    return set_bool_information<SecondLessThanFirst<ReturnFalse>,
+                                FirstLessThanSecond<ReturnFalse>,
+                                BothEquivalent<MoveOn>,
+                                FinishedTraversal<ReturnHasReachedEndOfBoth>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool is_before(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool is_before(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     if (begin(set2) == end(set2)) return false;
     
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<MoveOn>{},
-                                SecondLessThanFirst<ReturnFalse>{},
-                                BothEquivalent<ReturnFalse>{},
-                                FinishedTraversal<ReturnTrue>{});
+    return set_bool_information<SecondLessThanFirst<MoveOn>,
+                                FirstLessThanSecond<ReturnFalse>,
+                                BothEquivalent<ReturnFalse>,
+                                FinishedTraversal<ReturnTrue>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 template <typename Set1, typename Set2, typename Compare = std::less<typename std::remove_reference<Set1>::type::value_type>>
-bool is_after(Set1&& set1, Set2&& set2, Compare&& comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
+bool is_after(Set1&& set1, Set2&& set2, Compare comp = std::less<typename std::remove_reference<Set1>::type::value_type>{})
 {
     if (begin(set1) == end(set1)) return false;
     
-    return set_bool_information(FWD(set1),
-                                FWD(set2),
-                                comp,
-                                FirstLessThanSecond<ReturnFalse>{},
-                                SecondLessThanFirst<MoveOn>{},
-                                BothEquivalent<ReturnFalse>{},
-                                FinishedTraversal<ReturnTrue>{});
+    return set_bool_information<SecondLessThanFirst<ReturnFalse>,
+                                FirstLessThanSecond<MoveOn>,
+                                BothEquivalent<ReturnFalse>,
+                                FinishedTraversal<ReturnTrue>>
+                                (FWD(set1), FWD(set2), comp);
 }
 
 #endif /* SET_BOOL_ALGORITHMS_HPP */
